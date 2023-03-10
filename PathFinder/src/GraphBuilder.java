@@ -36,11 +36,20 @@ public class GraphBuilder {
         this.maxTan = maxTan;
     }
 
-    public boolean buildGraph(int iH, int jH, int iT, int jT) {
-        if (iH < 0 || iH >= n || jH < 0 || jH >= m) {
+    public void setDimensions(double X, double Y) { this.X = X; this.Y = Y; }
+
+    public void setSize(int n, int m) {
+        this.n = n; this.m = m;
+        heightMatrix = null;
+        heightMatrix = new double[n][m];
+        nodes = new ArrayList<>(n * m);
+    }
+
+    public boolean buildGraph(int xH, int yH, int xT, int yT) {
+        if (xH < 0 || xH >= n || yH < 0 || yH >= m) {
             return false;
         }
-        if (iT < 0 || iT >= n || jT < 0 || jT >= m) {
+        if (xT < 0 || xT >= n || yT < 0 || yT >= m) {
             return false;
         }
 
@@ -56,11 +65,11 @@ public class GraphBuilder {
         for (int i = 0; i < n; i ++) {
             for (int j = 0; j < m; j++) {
                 Node currNode = nodes.get(i * m + j);
-                if (i == iH && j == jH){
+                if (j == xH && i == yH){
                     head = currNode;
                     head.setG(0);
                 }
-                if (i == iT && j == jT){
+                if (j == xT && i == yT){
                     target = currNode;
                 }
 
@@ -453,6 +462,28 @@ public class GraphBuilder {
                 this.heightMatrix[i][j] = heightMatrix[i][j];
             }
         }
+    }
+
+    public ArrayList<Pair<Integer, Integer>> getCoordinateListByPath(ArrayList<Integer> path) {
+
+        if(nodes == null) {
+            return null;
+        }
+
+        ArrayList<Pair<Integer, Integer>> coordinateList = new ArrayList<>(path.size());
+        for (Integer id: path) {
+            coordinateList.add(
+                    new Pair<>(
+                            nodes.get(id).getCoordinates()
+                    )
+            );
+        }
+
+        return  coordinateList;
+    }
+
+    public void flushHeightMatrix() {
+        heightMatrix = null;
     }
 
 

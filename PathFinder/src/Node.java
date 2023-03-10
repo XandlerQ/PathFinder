@@ -7,8 +7,7 @@ public class Node implements Comparable<Node> {
     private int id;
 
     //Coordinates
-    private int x;
-    private int y;
+    Pair<Integer, Integer> coordinates;
 
     // Parent in the path
     private Node parent = null;
@@ -24,14 +23,12 @@ public class Node implements Comparable<Node> {
     Node() {
         this.id = idCounter++;
         this.neighbours = new ArrayList<>();
-        this.x = 0;
-        this.y = 0;
+        coordinates = null;
     }
 
     Node(int x, int y) {
         this();
-        this.x = x;
-        this.y = y;
+        coordinates = new Pair<>(x, y);
     }
 
     // Getters
@@ -59,6 +56,12 @@ public class Node implements Comparable<Node> {
     public double getH() {
         return h;
     }
+
+    public int getX() { return coordinates.getL(); }
+
+    public int getY() { return coordinates.getR(); }
+
+    public Pair<Integer, Integer> getCoordinates() { return coordinates; }
 
     //Setters
 
@@ -91,7 +94,7 @@ public class Node implements Comparable<Node> {
     }
 
     public double calculateHeuristic(Node target) { //Chebyshev distance heuristic
-        h = Math.max(Math.abs(target.x - x), Math.abs(target.y - y));
+        h = Math.max(Math.abs(target.getX() - coordinates.getL()), Math.abs(target.getY() - coordinates.getR()));
         return h;
     }
 

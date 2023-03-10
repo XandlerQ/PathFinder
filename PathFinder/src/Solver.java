@@ -11,6 +11,10 @@ public class Solver {
         pathLength = 0;
     }
 
+    public ArrayList<Integer> getPathIds() {
+        return pathIds;
+    }
+
     public boolean aStar(Node start, Node target){
         PriorityQueue<Node> closedList = new PriorityQueue<>();
         PriorityQueue<Node> openList = new PriorityQueue<>();
