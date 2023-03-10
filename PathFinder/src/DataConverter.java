@@ -73,8 +73,7 @@ public class DataConverter {
         grBuilder.setDimensions(X, Y);
         grBuilder.setSize(imageWidth, imageHeight);
         grBuilder.setMaxTan(maxTan);
-        grBuilder.setHeightMatrix(heightMatrix);
-        return grBuilder.buildGraph(xH, yH, xT, yT);
+        return grBuilder.buildGraph(xH, yH, xT, yT, this.heightMatrix);
     }
 
     public Node getHead() {

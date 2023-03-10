@@ -23,26 +23,26 @@ public class Node implements Comparable<Node> {
     Node() {
         this.id = idCounter++;
         this.neighbours = new ArrayList<>();
-        coordinates = null;
+        this.coordinates = null;
     }
 
     Node(int x, int y) {
         this();
-        coordinates = new Pair<>(x, y);
+        this.coordinates = new Pair<>(x, y);
     }
 
     // Getters
 
     public int getId() {
-        return id;
+        return this.id;
     }
 
     public Node getParent() {
-        return parent;
+        return this.parent;
     }
 
     public ArrayList<Edge> getNeighbours() {
-        return neighbours;
+        return this.neighbours;
     }
 
     public double getF() {
@@ -57,11 +57,11 @@ public class Node implements Comparable<Node> {
         return h;
     }
 
-    public int getX() { return coordinates.getL(); }
+    public int getX() { return this.coordinates.getL(); }
 
-    public int getY() { return coordinates.getR(); }
+    public int getY() { return this.coordinates.getR(); }
 
-    public Pair<Integer, Integer> getCoordinates() { return coordinates; }
+    public Pair<Integer, Integer> getCoordinates() { return this.coordinates; }
 
     //Setters
 
@@ -90,12 +90,12 @@ public class Node implements Comparable<Node> {
 
     public void addEdge(double weight, Node node) { //Add edge to node
         Edge newEdge = new Edge(weight, node);
-        neighbours.add(newEdge);
+        this.neighbours.add(newEdge);
     }
 
     public double calculateHeuristic(Node target) { //Chebyshev distance heuristic
-        h = Math.max(Math.abs(target.getX() - coordinates.getL()), Math.abs(target.getY() - coordinates.getR()));
-        return h;
+        this.h = Math.max(Math.abs(target.getX() - this.coordinates.getL()), Math.abs(target.getY() - this.coordinates.getR()));
+        return this.h;
     }
 
     public static class Edge {

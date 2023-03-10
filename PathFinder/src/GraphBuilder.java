@@ -6,7 +6,7 @@ public class GraphBuilder {
     private int n, m; // Matrix dimensions
     private double X, Y;
     private double maxTan;
-    public double[][] heightMatrix;    //Height matrix
+    //public double[][] heightMatrix;    //Height matrix
 
     private ArrayList<Node> nodes;
 
@@ -18,7 +18,6 @@ public class GraphBuilder {
         this.X = 0;
         this.Y = 0;
         this.maxTan = 0;
-        this.heightMatrix = null;
         this.nodes = null;
     }
 
@@ -28,7 +27,6 @@ public class GraphBuilder {
         this.m = m;
         this.X = X;
         this.Y = Y;
-        this.heightMatrix = new double[n][m];
         nodes = new ArrayList<>(n * m);
     }
 
@@ -40,12 +38,10 @@ public class GraphBuilder {
 
     public void setSize(int n, int m) {
         this.n = n; this.m = m;
-        heightMatrix = null;
-        heightMatrix = new double[n][m];
         nodes = new ArrayList<>(n * m);
     }
 
-    public boolean buildGraph(int xH, int yH, int xT, int yT) {
+    public boolean buildGraph(int xH, int yH, int xT, int yT, double[][] heightMatrix) {
         if (xH < 0 || xH >= n || yH < 0 || yH >= m) {
             return false;
         }
@@ -417,7 +413,9 @@ public class GraphBuilder {
             }
         }
 
-
+        nodes.forEach(node -> {
+            node.calculateHeuristic(target);
+        });
 
         return true;
     }
@@ -456,14 +454,6 @@ public class GraphBuilder {
         return h + Math.sqrt(s * s + h * h);
     }
 
-    public void setHeightMatrix(double[][] heightMatrix){
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < m; j++) {
-                this.heightMatrix[i][j] = heightMatrix[i][j];
-            }
-        }
-    }
-
     public ArrayList<Pair<Integer, Integer>> getCoordinateListByPath(ArrayList<Integer> path) {
 
         if(nodes == null) {
@@ -473,19 +463,11 @@ public class GraphBuilder {
         ArrayList<Pair<Integer, Integer>> coordinateList = new ArrayList<>(path.size());
         for (Integer id: path) {
             coordinateList.add(
-                    new Pair<>(
-                            nodes.get(id).getCoordinates()
-                    )
+                    new Pair<>(nodes.get(id).getCoordinates())
             );
         }
 
         return  coordinateList;
     }
-
-    public void flushHeightMatrix() {
-        heightMatrix = null;
-    }
-
-
 
 }

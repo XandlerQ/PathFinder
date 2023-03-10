@@ -1,6 +1,5 @@
-import java.util.*;
-import java.lang.*;
-import java.io.*;
+import java.lang.String;
+import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws IOException {
@@ -9,7 +8,7 @@ public class Main {
         dataConv.setDimensions(51037, 51037);
         dataConv.setMaxTan(1.8);
         dataConv.fillHeightMatrixFromImage();
-        dataConv.buildGraph(20, 20, 480, 480);
+        dataConv.buildGraph(480, 20, 480, 480);
 
         Solver slv = new Solver();
         slv.aStar(dataConv.getHead(), dataConv.getTarget());
