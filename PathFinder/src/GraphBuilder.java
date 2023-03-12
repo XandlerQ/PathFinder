@@ -5,8 +5,10 @@ public class GraphBuilder {
     public Node target; //Graph target
     private int n, m; // Matrix dimensions
     private double X, Y;
+
+    private double xNet, yNet;
+    private double diagonalS;
     private double maxTan;
-    //public double[][] heightMatrix;    //Height matrix
 
     private ArrayList<Node> nodes;
 
@@ -41,7 +43,7 @@ public class GraphBuilder {
         nodes = new ArrayList<>(n * m);
     }
 
-    public boolean buildGraph(int xH, int yH, int xT, int yT, double[][] heightMatrix) {
+    public boolean buildGraph(int xH, int yH, int xT, int yT, Matrix heightMatrix) {
         if (xH < 0 || xH >= n || yH < 0 || yH >= m) {
             return false;
         }
@@ -49,8 +51,8 @@ public class GraphBuilder {
             return false;
         }
 
-        double xNet = X / m;
-        double yNet = Y / n;
+        xNet = X / m;
+        yNet = Y / n;
 
         for (int i = 0; i < n; i ++) {
             for (int j = 0; j < m; j++) {
@@ -70,344 +72,70 @@ public class GraphBuilder {
                 }
 
                 int nodeType = nodeType(i, j);
-                double currHeight = heightMatrix[i][j];
+                double currHeight = heightMatrix.getVal(i,j);
                 double s;
                 double h;
                 int nI, nJ;
-                double diagonalS = Math.sqrt(xNet * xNet + yNet * yNet);
+                diagonalS = Math.sqrt(xNet * xNet + yNet * yNet);
 
                 switch (nodeType) {
                     case 0 -> {
-                        s = yNet;
-                        //U neighbour
-                        nI = i - 1;
-                        nJ = j;
-                        h = heightMatrix[nI][nJ] - currHeight;
-                        if (Math.abs(h) / s <= maxTan) {
-                            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
-                        }
-
-                        //B neighbour
-                        nI = i + 1;
-                        h = heightMatrix[nI][nJ] - currHeight;
-                        if (Math.abs(h) / s <= maxTan) {
-                            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
-                        }
-                        s = xNet;
-                        //L neighbour
-                        nI = i;
-                        nJ = j - 1;
-                        h = heightMatrix[nI][nJ] - currHeight;
-                        if (Math.abs(h) / s <= maxTan) {
-                            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
-                        }
-
-                        //R neighbour
-                        nJ = j + 1;
-                        h = heightMatrix[nI][nJ] - currHeight;
-                        if (Math.abs(h) / s <= maxTan) {
-                            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
-                        }
-                        s = diagonalS;
-                        //LU neighbour
-                        nI = i - 1;
-                        nJ = j - 1;
-                        h = heightMatrix[nI][nJ] - currHeight;
-                        if (Math.abs(h) / s <= maxTan) {
-                            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
-                        }
-
-                        //LB neighbour
-                        nI = i + 1;
-                        nJ = j - 1;
-                        h = heightMatrix[nI][nJ] - currHeight;
-                        if (Math.abs(h) / s <= maxTan) {
-                            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
-                        }
-
-                        //RB neighbour
-                        nI = i + 1;
-                        nJ = j + 1;
-                        h = heightMatrix[nI][nJ] - currHeight;
-                        if (Math.abs(h) / s <= maxTan) {
-                            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
-                        }
-
-                        //RU neighbour
-                        nI = i - 1;
-                        nJ = j + 1;
-                        h = heightMatrix[nI][nJ] - currHeight;
-                        if (Math.abs(h) / s <= maxTan) {
-                            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
-                        }
+                        addUNeighbour(currNode, i, j, heightMatrix); //U
+                        addBNeighbour(currNode, i, j, heightMatrix); //B
+                        addLNeighbour(currNode, i, j, heightMatrix); //L
+                        addRNeighbour(currNode, i, j, heightMatrix); //R
+                        addLUNeighbour(currNode, i, j, heightMatrix); //LU
+                        addLBNeighbour(currNode, i, j, heightMatrix); //LB
+                        addRBNeighbour(currNode, i, j, heightMatrix); //RB
+                        addRUNeighbour(currNode, i, j, heightMatrix); //RU
                     }
                     case 1 -> {
-                        s = yNet;
-                        //B neighbour
-                        nI = i + 1;
-                        nJ = j;
-                        h = heightMatrix[nI][nJ] - currHeight;
-                        if (Math.abs(h) / s <= maxTan) {
-                            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
-                        }
-                        s = xNet;
-                        //R neighbour
-                        nI = i;
-                        nJ = j + 1;
-                        h = heightMatrix[nI][nJ] - currHeight;
-                        if (Math.abs(h) / s <= maxTan) {
-                            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
-                        }
-                        s = diagonalS;
-                        //RB neighbour
-                        nI = i + 1;
-                        nJ = j + 1;
-                        h = heightMatrix[nI][nJ] - currHeight;
-                        if (Math.abs(h) / s <= maxTan) {
-                            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
-                        }
+                        addBNeighbour(currNode, i, j, heightMatrix); //B
+                        addRNeighbour(currNode, i, j, heightMatrix); //R
+                        addRBNeighbour(currNode, i, j, heightMatrix); //RB
                     }
                     case 2 -> {
-                        s = yNet;
-                        //U neighbour
-                        nI = i - 1;
-                        nJ = j;
-                        h = heightMatrix[nI][nJ] - currHeight;
-                        if (Math.abs(h) / s <= maxTan) {
-                            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
-                        }
-                        s = xNet;
-                        //R neighbour
-                        nI = i;
-                        nJ = j + 1;
-                        h = heightMatrix[nI][nJ] - currHeight;
-                        if (Math.abs(h) / s <= maxTan) {
-                            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
-                        }
-                        s = diagonalS;
-                        //RU neighbour
-                        nI = i - 1;
-                        nJ = j + 1;
-                        h = heightMatrix[nI][nJ] - currHeight;
-                        if (Math.abs(h) / s <= maxTan) {
-                            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
-                        }
+                        addUNeighbour(currNode, i, j, heightMatrix); //U
+                        addRNeighbour(currNode, i, j, heightMatrix); //R
+                        addRUNeighbour(currNode, i, j, heightMatrix); //RU
                     }
                     case 3 -> {
-                        s = yNet;
-                        //U neighbour
-                        nI = i - 1;
-                        nJ = j;
-                        h = heightMatrix[nI][nJ] - currHeight;
-                        if (Math.abs(h) / s <= maxTan) {
-                            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
-                        }
-                        s = xNet;
-                        //L neighbour
-                        nI = i;
-                        nJ = j - 1;
-                        h = heightMatrix[nI][nJ] - currHeight;
-                        if (Math.abs(h) / s <= maxTan) {
-                            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
-                        }
-                        s = diagonalS;
-                        //LU neighbour
-                        nI = i - 1;
-                        nJ = j - 1;
-                        h = heightMatrix[nI][nJ] - currHeight;
-                        if (Math.abs(h) / s <= maxTan) {
-                            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
-                        }
+                        addUNeighbour(currNode, i, j, heightMatrix); //U
+                        addLNeighbour(currNode, i, j, heightMatrix); //L
+                        addLUNeighbour(currNode, i, j, heightMatrix); //LU
                     }
                     case 4 -> {
-                        s = yNet;
-                        //B neighbour
-                        nI = i + 1;
-                        nJ = j;
-                        h = heightMatrix[nI][nJ] - currHeight;
-                        if (Math.abs(h) / s <= maxTan) {
-                            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
-                        }
-                        s = xNet;
-                        //L neighbour
-                        nI = i;
-                        nJ = j - 1;
-                        h = heightMatrix[nI][nJ] - currHeight;
-                        if (Math.abs(h) / s <= maxTan) {
-                            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
-                        }
-                        s = diagonalS;
-                        //LB neighbour
-                        nI = i + 1;
-                        nJ = j - 1;
-                        h = heightMatrix[nI][nJ] - currHeight;
-                        if (Math.abs(h) / s <= maxTan) {
-                            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
-                        }
+                        addBNeighbour(currNode, i, j, heightMatrix); //B
+                        addLNeighbour(currNode, i, j, heightMatrix); //L
+                        addLBNeighbour(currNode, i, j, heightMatrix); //LB
                     }
                     case 5 -> {
-                        s = yNet;
-                        //U neighbour
-                        nI = i - 1;
-                        nJ = j;
-                        h = heightMatrix[nI][nJ] - currHeight;
-                        if (Math.abs(h) / s <= maxTan) {
-                            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
-                        }
-
-                        //B neighbour
-                        nI = i + 1;
-                        h = heightMatrix[nI][nJ] - currHeight;
-                        if (Math.abs(h) / s <= maxTan) {
-                            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
-                        }
-                        s = xNet;
-                        //R neighbour
-                        nI = i;
-                        nJ = j + 1;
-                        h = heightMatrix[nI][nJ] - currHeight;
-                        if (Math.abs(h) / s <= maxTan) {
-                            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
-                        }
-                        s = diagonalS;
-                        //RB neighbour
-                        nI = i + 1;
-                        nJ = j + 1;
-                        h = heightMatrix[nI][nJ] - currHeight;
-                        if (Math.abs(h) / s <= maxTan) {
-                            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
-                        }
-
-                        //RU neighbour
-                        nI = i - 1;
-                        nJ = j + 1;
-                        h = heightMatrix[nI][nJ] - currHeight;
-                        if (Math.abs(h) / s <= maxTan) {
-                            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
-                        }
+                        addUNeighbour(currNode, i, j, heightMatrix); //U
+                        addBNeighbour(currNode, i, j, heightMatrix); //B
+                        addRNeighbour(currNode, i, j, heightMatrix); //R
+                        addRBNeighbour(currNode, i, j, heightMatrix); //RB
+                        addRUNeighbour(currNode, i, j, heightMatrix); //RU
                     }
                     case 6 -> {
-                        s = yNet;
-                        //U neighbour
-                        nI = i - 1;
-                        nJ = j;
-                        h = heightMatrix[nI][nJ] - currHeight;
-                        if (Math.abs(h) / s <= maxTan) {
-                            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
-                        }
-                        s = xNet;
-                        //L neighbour
-                        nI = i;
-                        nJ = j - 1;
-                        h = heightMatrix[nI][nJ] - currHeight;
-                        if (Math.abs(h) / s <= maxTan) {
-                            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
-                        }
-
-                        //R neighbour
-                        nJ = j + 1;
-                        h = heightMatrix[nI][nJ] - currHeight;
-                        if (Math.abs(h) / s <= maxTan) {
-                            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
-                        }
-                        s = diagonalS;
-                        //LU neighbour
-                        nI = i - 1;
-                        nJ = j - 1;
-                        h = heightMatrix[nI][nJ] - currHeight;
-                        if (Math.abs(h) / s <= maxTan) {
-                            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
-                        }
-
-                        //RU neighbour
-                        nI = i - 1;
-                        nJ = j + 1;
-                        h = heightMatrix[nI][nJ] - currHeight;
-                        if (Math.abs(h) / s <= maxTan) {
-                            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
-                        }
+                        addUNeighbour(currNode, i, j, heightMatrix); //U
+                        addLNeighbour(currNode, i, j, heightMatrix); //L
+                        addRNeighbour(currNode, i, j, heightMatrix); //R
+                        addLUNeighbour(currNode, i, j, heightMatrix); //LU
+                        addRUNeighbour(currNode, i, j, heightMatrix); //RU
                     }
                     case 7 -> {
-                        s = yNet;
-                        //U neighbour
-                        nI = i - 1;
-                        nJ = j;
-                        h = heightMatrix[nI][nJ] - currHeight;
-                        if (Math.abs(h) / s <= maxTan) {
-                            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
-                        }
-
-                        //B neighbour
-                        nI = i + 1;
-                        h = heightMatrix[nI][nJ] - currHeight;
-                        if (Math.abs(h) / s <= maxTan) {
-                            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
-                        }
-                        s = xNet;
-                        //L neighbour
-                        nI = i;
-                        nJ = j - 1;
-                        h = heightMatrix[nI][nJ] - currHeight;
-                        if (Math.abs(h) / s <= maxTan) {
-                            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
-                        }
-                        s = diagonalS;
-                        //LU neighbour
-                        nI = i - 1;
-                        nJ = j - 1;
-                        h = heightMatrix[nI][nJ] - currHeight;
-                        if (Math.abs(h) / s <= maxTan) {
-                            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
-                        }
-
-                        //LB neighbour
-                        nI = i + 1;
-                        nJ = j - 1;
-                        h = heightMatrix[nI][nJ] - currHeight;
-                        if (Math.abs(h) / s <= maxTan) {
-                            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
-                        }
+                        addUNeighbour(currNode, i, j, heightMatrix); //U
+                        addBNeighbour(currNode, i, j, heightMatrix); //B
+                        addLNeighbour(currNode, i, j, heightMatrix); //L
+                        addLUNeighbour(currNode, i, j, heightMatrix); //LU
+                        addLBNeighbour(currNode, i, j, heightMatrix); //LB
                     }
                     case 8 -> {
-                        s = yNet;
-                        //B neighbour
-                        nI = i + 1;
-                        nJ = j;
-                        h = heightMatrix[nI][nJ] - currHeight;
-                        if (Math.abs(h) / s <= maxTan) {
-                            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
-                        }
-                        s = xNet;
-                        //L neighbour
-                        nI = i;
-                        nJ = j - 1;
-                        h = heightMatrix[nI][nJ] - currHeight;
-                        if (Math.abs(h) / s <= maxTan) {
-                            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
-                        }
-
-                        //R neighbour
-                        nJ = j + 1;
-                        h = heightMatrix[nI][nJ] - currHeight;
-                        if (Math.abs(h) / s <= maxTan) {
-                            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
-                        }
-                        s = diagonalS;
-                        //LB neighbour
-                        nI = i + 1;
-                        nJ = j - 1;
-                        h = heightMatrix[nI][nJ] - currHeight;
-                        if (Math.abs(h) / s <= maxTan) {
-                            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
-                        }
-
-                        //RB neighbour
-                        nI = i + 1;
-                        nJ = j + 1;
-                        h = heightMatrix[nI][nJ] - currHeight;
-                        if (Math.abs(h) / s <= maxTan) {
-                            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
-                        }
+                        addBNeighbour(currNode, i, j, heightMatrix); //B
+                        addLNeighbour(currNode, i, j, heightMatrix); //L
+                        addRNeighbour(currNode, i, j, heightMatrix); //R
+                        addLBNeighbour(currNode, i, j, heightMatrix); //LB
+                        addRBNeighbour(currNode, i, j, heightMatrix); //RB
                     }
                 }
             }
@@ -418,6 +146,102 @@ public class GraphBuilder {
         });
 
         return true;
+    }
+
+    private void addUNeighbour(Node currNode, int i, int j, Matrix heightMatrix) {
+        double s = yNet;
+        //U neighbour
+        int nI = i - 1;
+        int nJ = j;
+        double currHeight = heightMatrix.getVal(i, j);
+        double h = heightMatrix.getVal(nI, nJ) - currHeight;
+        if (Math.abs(h) / s <= maxTan) {
+            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
+        }
+    }
+
+    private void addBNeighbour(Node currNode, int i, int j, Matrix heightMatrix) {
+        double s = yNet;
+        //B neighbour
+        int nI = i + 1;
+        int nJ = j;
+        double currHeight = heightMatrix.getVal(i, j);
+        double h = heightMatrix.getVal(nI, nJ) - currHeight;
+        if (Math.abs(h) / s <= maxTan) {
+            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
+        }
+    }
+
+    private void addLNeighbour(Node currNode, int i, int j, Matrix heightMatrix) {
+        double s = xNet;
+        //L neighbour
+        int nI = i;
+        int nJ = j - 1;
+        double currHeight = heightMatrix.getVal(i, j);
+        double h = heightMatrix.getVal(nI, nJ) - currHeight;
+        if (Math.abs(h) / s <= maxTan) {
+            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
+        }
+    }
+
+    private void addRNeighbour(Node currNode, int i, int j, Matrix heightMatrix) {
+        double s = xNet;
+        //R neighbour
+        int nI = i;
+        int nJ = j + 1;
+        double currHeight = heightMatrix.getVal(i, j);
+        double h = heightMatrix.getVal(nI, nJ) - currHeight;
+        if (Math.abs(h) / s <= maxTan) {
+            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
+        }
+    }
+
+    private void addLUNeighbour(Node currNode, int i, int j, Matrix heightMatrix) {
+        double s = diagonalS;
+        //LU neighbour
+        int nI = i - 1;
+        int nJ = j - 1;
+        double currHeight = heightMatrix.getVal(i, j);
+        double h = heightMatrix.getVal(nI, nJ) - currHeight;
+        if (Math.abs(h) / s <= maxTan) {
+            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
+        }
+    }
+
+    private void addLBNeighbour(Node currNode, int i, int j, Matrix heightMatrix) {
+        double s = diagonalS;
+        //LU neighbour
+        int nI = i + 1;
+        int nJ = j - 1;
+        double currHeight = heightMatrix.getVal(i, j);
+        double h = heightMatrix.getVal(nI, nJ) - currHeight;
+        if (Math.abs(h) / s <= maxTan) {
+            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
+        }
+    }
+
+    private void addRBNeighbour(Node currNode, int i, int j, Matrix heightMatrix) {
+        double s = diagonalS;
+        //LU neighbour
+        int nI = i + 1;
+        int nJ = j + 1;
+        double currHeight = heightMatrix.getVal(i, j);
+        double h = heightMatrix.getVal(nI, nJ) - currHeight;
+        if (Math.abs(h) / s <= maxTan) {
+            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
+        }
+    }
+
+    private void addRUNeighbour(Node currNode, int i, int j, Matrix heightMatrix) {
+        double s = diagonalS;
+        //LU neighbour
+        int nI = i - 1;
+        int nJ = j + 1;
+        double currHeight = heightMatrix.getVal(i, j);
+        double h = heightMatrix.getVal(nI, nJ) - currHeight;
+        if (Math.abs(h) / s <= maxTan) {
+            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
+        }
     }
 
     private int nodeType(int i, int j) {

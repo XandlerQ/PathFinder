@@ -3,20 +3,13 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        DataConverter dataConv = new DataConverter();
-        dataConv.loadImage("render.png", 500, 500, 0, 2500);
-        dataConv.setDimensions(51037, 51037);
-        dataConv.setMaxTan(1.8);
-        dataConv.fillHeightMatrixFromImage();
-        dataConv.buildGraph(480, 20, 480, 480);
-
-        Solver slv = new Solver();
-        slv.aStar(dataConv.getHead(), dataConv.getTarget());
-
-        slv.fillPath(dataConv.getTarget());
-
-
-        dataConv.printSolution(slv.getPathIds());
-
+        MainController controller = new MainController();
+        controller.loadImage("render.png", 225, 225, 0, 10);
+        controller.setDimensions(225, 225);
+        controller.setMaxTan(1);
+        controller.fillHeightMatrixFromImage();
+        controller.buildGraph(5, 20, 211, 220);
+        controller.initSolve();
+        controller.printSolutionToImage();
     }
 }

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 public class DataConverter {
     private GraphBuilder grBuilder;
-    public double[][] heightMatrix;
+    private Matrix heightMatrix;
 
     public String fileName;
     private File inputFile;
@@ -21,10 +21,18 @@ public class DataConverter {
 
 
     DataConverter() {
-        grBuilder = new GraphBuilder();
-        fileName = null;
-        bImage = null;
-        inputFile = null;
+        this.grBuilder = new GraphBuilder();
+        this.heightMatrix = null;
+        this.fileName = null;
+        this.inputFile = null;
+        this.bImage = null;
+        this.imageWidth = 0;
+        this.imageHeight = 0;
+        this.minElevation = 0;
+        this.maxElevation = 0;
+        this.maxTan = 1;
+        this.X = 0;
+        this.Y = 0;
     }
 
     public void setDimensions(double X, double Y) { this.X = X; this.Y = Y; }
@@ -55,14 +63,14 @@ public class DataConverter {
             return false;
         }
 
-        heightMatrix = new double[imageWidth][imageHeight];
+        heightMatrix = new Matrix(imageWidth, imageHeight);
 
         for (int i = 0; i < imageHeight; i++){
             for (int j = 0; j < imageWidth; j++){
                 Color pColor = new Color(bImage.getRGB(j,i));
                 int red = pColor.getRed();
                 double beta = red * 2 / 255.;
-                heightMatrix[i][j] = beta * (maxElevation - minElevation) + minElevation;
+                heightMatrix.setVal(beta * (maxElevation - minElevation) + minElevation, i, j);
             }
         }
 
@@ -84,7 +92,7 @@ public class DataConverter {
         return grBuilder.target;
     }
 
-    public void printSolution(ArrayList<Integer> path) throws IOException {
+    public void printSolutionToImage(ArrayList<Integer> path) throws IOException {
 
         ArrayList<Pair<Integer, Integer>> coordinatesList = grBuilder.getCoordinateListByPath(path);
 
