@@ -9,6 +9,7 @@ public class GraphBuilder {
     private double xNet, yNet;
     private double diagonalS;
     private double maxTan;
+    private double minTan;
 
     private ArrayList<Node> nodes;
 
@@ -20,6 +21,7 @@ public class GraphBuilder {
         this.X = 0;
         this.Y = 0;
         this.maxTan = 0;
+        this.minTan = 0;
         this.nodes = null;
     }
 
@@ -35,6 +37,10 @@ public class GraphBuilder {
     public void setMaxTan(double maxTan) {
         this.maxTan = maxTan;
     }
+    public void setMinTan(double minTan) {
+        this.minTan = minTan;
+    }
+
 
     public void setDimensions(double X, double Y) { this.X = X; this.Y = Y; }
 
@@ -44,10 +50,10 @@ public class GraphBuilder {
     }
 
     public boolean buildGraph(int xH, int yH, int xT, int yT, Matrix heightMatrix) {
-        if (xH < 0 || xH >= n || yH < 0 || yH >= m) {
+        if (xH < 0 || xH >= m || yH < 0 || yH >= n) {
             return false;
         }
-        if (xT < 0 || xT >= n || yT < 0 || yT >= m) {
+        if (xT < 0 || xT >= m || yT < 0 || yT >= n) {
             return false;
         }
 
@@ -72,10 +78,6 @@ public class GraphBuilder {
                 }
 
                 int nodeType = nodeType(i, j);
-                double currHeight = heightMatrix.getVal(i,j);
-                double s;
-                double h;
-                int nI, nJ;
                 diagonalS = Math.sqrt(xNet * xNet + yNet * yNet);
 
                 switch (nodeType) {
@@ -155,7 +157,7 @@ public class GraphBuilder {
         int nJ = j;
         double currHeight = heightMatrix.getVal(i, j);
         double h = heightMatrix.getVal(nI, nJ) - currHeight;
-        if (Math.abs(h) / s <= maxTan) {
+        if (validEdge(s, h)) {
             currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
         }
     }
@@ -167,7 +169,7 @@ public class GraphBuilder {
         int nJ = j;
         double currHeight = heightMatrix.getVal(i, j);
         double h = heightMatrix.getVal(nI, nJ) - currHeight;
-        if (Math.abs(h) / s <= maxTan) {
+        if (validEdge(s, h)) {
             currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
         }
     }
@@ -179,7 +181,7 @@ public class GraphBuilder {
         int nJ = j - 1;
         double currHeight = heightMatrix.getVal(i, j);
         double h = heightMatrix.getVal(nI, nJ) - currHeight;
-        if (Math.abs(h) / s <= maxTan) {
+        if (validEdge(s, h)) {
             currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
         }
     }
@@ -191,7 +193,7 @@ public class GraphBuilder {
         int nJ = j + 1;
         double currHeight = heightMatrix.getVal(i, j);
         double h = heightMatrix.getVal(nI, nJ) - currHeight;
-        if (Math.abs(h) / s <= maxTan) {
+        if (validEdge(s, h)) {
             currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
         }
     }
@@ -203,7 +205,7 @@ public class GraphBuilder {
         int nJ = j - 1;
         double currHeight = heightMatrix.getVal(i, j);
         double h = heightMatrix.getVal(nI, nJ) - currHeight;
-        if (Math.abs(h) / s <= maxTan) {
+        if (validEdge(s, h)) {
             currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
         }
     }
@@ -215,7 +217,7 @@ public class GraphBuilder {
         int nJ = j - 1;
         double currHeight = heightMatrix.getVal(i, j);
         double h = heightMatrix.getVal(nI, nJ) - currHeight;
-        if (Math.abs(h) / s <= maxTan) {
+        if (validEdge(s, h)) {
             currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
         }
     }
@@ -227,7 +229,7 @@ public class GraphBuilder {
         int nJ = j + 1;
         double currHeight = heightMatrix.getVal(i, j);
         double h = heightMatrix.getVal(nI, nJ) - currHeight;
-        if (Math.abs(h) / s <= maxTan) {
+        if (validEdge(s, h)) {
             currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
         }
     }
@@ -239,9 +241,13 @@ public class GraphBuilder {
         int nJ = j + 1;
         double currHeight = heightMatrix.getVal(i, j);
         double h = heightMatrix.getVal(nI, nJ) - currHeight;
-        if (Math.abs(h) / s <= maxTan) {
+        if (validEdge(s, h)) {
             currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
         }
+    }
+
+    private boolean validEdge(double s, double h) {
+        return h / s <= maxTan && h / s >= minTan;
     }
 
     private int nodeType(int i, int j) {
@@ -275,7 +281,12 @@ public class GraphBuilder {
     }
 
     private double calculateWeight(double s, double h) {
-        return h + Math.sqrt(s * s + h * h);
+        if (h > 0) {
+            return h + 0.02 * s;
+        }
+        else {
+            return 0.02 * s;
+        }
     }
 
     public ArrayList<Pair<Integer, Integer>> getCoordinateListByPath(ArrayList<Integer> path) {

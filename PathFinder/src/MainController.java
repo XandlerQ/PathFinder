@@ -20,6 +20,9 @@ public class MainController {
     public void setMaxTan(double maxTan) {
         converter.setMaxTan(maxTan);
     }
+    public void setMinTan(double minTan) {
+        converter.setMinTan(minTan);
+    }
 
     public boolean fillHeightMatrixFromImage() {
         return converter.fillHeightMatrixFromImage();
@@ -35,6 +38,7 @@ public class MainController {
         boolean result = solver.aStar();
         if (result) {
             solver.fillPath();
+            solver.printPathLength();
         }
         return result;
     }

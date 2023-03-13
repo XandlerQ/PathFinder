@@ -15,6 +15,7 @@ public class DataConverter {
     double minElevation, maxElevation;
 
     double maxTan;
+    double minTan;
 
     double X, Y;
 
@@ -31,6 +32,7 @@ public class DataConverter {
         this.minElevation = 0;
         this.maxElevation = 0;
         this.maxTan = 1;
+        this.minTan = 0;
         this.X = 0;
         this.Y = 0;
     }
@@ -39,6 +41,9 @@ public class DataConverter {
 
     public void setMaxTan(double maxTan) {
         this.maxTan = maxTan;
+    }
+    public void setMinTan(double minTan) {
+        this.minTan = minTan;
     }
 
     public void loadImage(String fName, int width, int height, double minElevation, double maxElevation) throws IOException {
@@ -63,7 +68,7 @@ public class DataConverter {
             return false;
         }
 
-        heightMatrix = new Matrix(imageWidth, imageHeight);
+        heightMatrix = new Matrix(imageHeight, imageWidth);
 
         for (int i = 0; i < imageHeight; i++){
             for (int j = 0; j < imageWidth; j++){
@@ -79,8 +84,9 @@ public class DataConverter {
 
     public boolean buildGraph(int xH, int yH, int xT, int yT) {
         grBuilder.setDimensions(X, Y);
-        grBuilder.setSize(imageWidth, imageHeight);
+        grBuilder.setSize(imageHeight, imageWidth);
         grBuilder.setMaxTan(maxTan);
+        grBuilder.setMinTan(minTan);
         return grBuilder.buildGraph(xH, yH, xT, yT, this.heightMatrix);
     }
 

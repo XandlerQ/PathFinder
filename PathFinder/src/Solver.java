@@ -88,12 +88,8 @@ public class Solver {
         Collections.reverse(pathIds);
     }
 
-    public void printPath() {
-        for(int id : pathIds){
-            System.out.print(id + " ");
-        }
+    public void printPathLength() {
         System.out.println("\nPath length: " + pathLength + "\n");
-
     }
 
 }
