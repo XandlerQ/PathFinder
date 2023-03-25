@@ -29,6 +29,10 @@ public class Solver {
         return pathIds;
     }
 
+    public double getPathLength() {
+        return this.pathLength;
+    }
+
     public boolean aStar(){
         if(head == null || target == null) return false;
 

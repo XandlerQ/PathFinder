@@ -34,6 +34,14 @@ public class GraphBuilder {
         nodes = new ArrayList<>(n * m);
     }
 
+    public double getxNet() {
+        return this.xNet;
+    }
+
+    public double getyNet() {
+        return this.yNet;
+    }
+
     public void setMaxTan(double maxTan) {
         this.maxTan = maxTan;
     }

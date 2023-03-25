@@ -37,6 +37,10 @@ public class DataConverter {
         this.Y = 0;
     }
 
+    public GraphBuilder getGrBuilder() {
+        return this.grBuilder;
+    }
+
     public void setDimensions(double X, double Y) { this.X = X; this.Y = Y; }
 
     public void setMaxTan(double maxTan) {

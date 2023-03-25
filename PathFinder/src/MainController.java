@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class MainController {
     DataConverter converter;
@@ -45,6 +46,26 @@ public class MainController {
 
     public void printSolutionToImage() throws IOException {
         converter.printSolutionToImage(solver.getPathIds());
+    }
+
+    public Solution getSolution() {
+        Solution solution = new Solution();
+        double energy = solver.getPathLength();
+        ArrayList<Pair<Integer, Integer>> coordList = converter.getGrBuilder().getCoordinateListByPath(solver.getPathIds());
+        int size = coordList.size();
+
+        int[][] path = new int[size][2];
+
+        for (int i = 0; i < size; i++) {
+            path[i][0] = coordList.get(i).getL();
+            path[i][1] = coordList.get(i).getR();
+        }
+
+        solution.setSize(size);
+        solution.setEnergy(energy);
+        solution.setPath(path);
+
+        return solution;
     }
 
 

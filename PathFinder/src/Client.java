@@ -15,7 +15,6 @@ height matrix JSON format
 solution JSON format
 {
     "energy": 486,
-    "length": 435,
     "size": 20,
     "path":
     [
@@ -36,6 +35,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
  */
+
+import com.google.gson.Gson;
 
 public class Client {
 
@@ -62,6 +63,6 @@ public class Client {
         return json;
     }
 
-    void
+
     
 }
