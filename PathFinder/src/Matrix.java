@@ -15,12 +15,16 @@ public class Matrix {
         this.val = new double[n][m];
     }
 
+        public int getN() { return this.n; }
+    public int getM() { return this.m; }
+    public double getVal(int i, int j) {
+        return this.val[i][j];
+    }
+
     public void setVal(double val, int i, int j) {
         this.val[i][j] = val;
     }
 
-    public double getVal(int i, int j) {
-        return this.val[i][j];
-    }
+
 
 }

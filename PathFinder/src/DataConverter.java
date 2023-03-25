@@ -45,6 +45,7 @@ public class DataConverter {
     public void setMinTan(double minTan) {
         this.minTan = minTan;
     }
+    public void setHeightMatrix(Matrix heightMatrix) { this.heightMatrix = heightMatrix; }
 
     public void loadImage(String fName, int width, int height, double minElevation, double maxElevation) throws IOException {
         this.fileName = fName;
