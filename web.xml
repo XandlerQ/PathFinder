@@ -1,0 +1,13 @@
+<web-app>
+
+    <servlet>
+        <servlet-name>pathfinder</servlet-name>
+        <servlet-class>API</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>pathfinder</servlet-name>
+        <url-pattern>/data</url-pattern>
+    </servlet-mapping>
+
+</web-app>

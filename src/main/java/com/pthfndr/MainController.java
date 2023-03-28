@@ -19,12 +19,27 @@ public class MainController {
     public void setDimensions(double X, double Y) {
         converter.setDimensions(X, Y);
     }
+    public void setImageSize(int imageHeight, int imageWidth) {
+        this.converter.setImageSize(imageHeight, imageWidth);
+    }
 
     public void setMaxTan(double maxTan) {
         converter.setMaxTan(maxTan);
     }
     public void setMinTan(double minTan) {
         converter.setMinTan(minTan);
+    }
+
+    public void setMinElevation(double minElevation) {
+        this.converter.setMinElevation(minElevation);
+    }
+
+    public void setMaxElevation(double maxElevation) {
+        this.converter.setMaxElevation(maxElevation);
+    }
+
+    public void setHeigthMatrix(Matrix matrix) {
+        this.converter.setHeightMatrix(matrix);
     }
 
     public boolean fillHeightMatrixFromImage() {
@@ -50,8 +65,8 @@ public class MainController {
         converter.printSolutionToImage(solver.getPathIds());
     }
 
-    public Solution getSolution() {
-        Solution solution = new Solution();
+    public PojoSolution getSolution() {
+        PojoSolution solution = new PojoSolution();
         double energy = solver.getPathLength();
         ArrayList<Pair<Integer, Integer>> coordList = converter.getGrBuilder().getCoordinateListByPath(solver.getPathIds());
         int size = coordList.size();

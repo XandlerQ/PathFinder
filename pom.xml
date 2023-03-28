@@ -8,7 +8,7 @@
   <name>Archetype - PathFinder2.0</name>
   <url>http://maven.apache.org</url>
   <properties>
-    <exec.mainClass>com.pthfndr.Main</exec.mainClass>
+    <exec.mainClass>com.pthfndr.API</exec.mainClass>
   </properties>
   <dependencies>
     <dependency>

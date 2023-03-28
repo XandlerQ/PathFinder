@@ -2,7 +2,6 @@ package com.pthfndr;/*
 solution JSON format
 {
     "energy": 486,
-    "length": 435,
     "size": 20,
     "path":
     [
@@ -14,14 +13,12 @@ solution JSON format
 }
 */
 
-import java.util.ArrayList;
-
-public class Solution {
+public class PojoSolution {
     private double energy;
     private int size;
     private int[][] path;
 
-    Solution() {
+    PojoSolution() {
         this.energy = 0;
         this.size = 0;
         this.path = null;

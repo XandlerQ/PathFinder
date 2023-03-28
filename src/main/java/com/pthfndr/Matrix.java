@@ -26,6 +26,9 @@ public class Matrix {
     public void setVal(double val, int i, int j) {
         this.val[i][j] = val;
     }
+    public void setVal(double[][] val) {
+        this.val = val;
+    }
 
 
 

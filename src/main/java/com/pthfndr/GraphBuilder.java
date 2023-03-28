@@ -22,6 +22,8 @@ public class GraphBuilder {
         this.m = 0;
         this.X = 0;
         this.Y = 0;
+        this.xNet = 0;
+        this.yNet = 0;
         this.maxTan = 0;
         this.minTan = 0;
         this.nodes = null;
