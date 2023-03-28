@@ -38,6 +38,9 @@ public class Solver {
     public boolean aStar(){
         if(head == null || target == null) return false;
 
+        pathIds.clear();
+        pathLength = 0;
+
         PriorityQueue<Node> closedList = new PriorityQueue<>();
         PriorityQueue<Node> openList = new PriorityQueue<>();
 

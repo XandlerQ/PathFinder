@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class Node implements Comparable<Node> {
 
     // Id for readability of result purposes
-    private static int idCounter = 0;
+    public static int idCounter = 0;
     private int id;
 
     //Coordinates

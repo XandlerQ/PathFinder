@@ -19,7 +19,7 @@ public class API extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        response.getOutputStream().println("{\"CUm\" = 1}");
+        response.getOutputStream().println("PathFinder ready...");
     }
 
     @Override
@@ -28,7 +28,7 @@ public class API extends HttpServlet {
         Gson gson = new Gson();
         String requestData = request.getReader().lines().collect(Collectors.joining());
         PojoHeightMatrix requestMatrix = new PojoHeightMatrix();
-        requestMatrix = gson.fromJson(requestData, (Type)(requestMatrix));
+        requestMatrix = gson.fromJson(requestData, PojoHeightMatrix.class);
 
         Matrix matrix = new Matrix(requestMatrix.getN(), requestMatrix.getM());
         matrix.setVal(requestMatrix.getMx());

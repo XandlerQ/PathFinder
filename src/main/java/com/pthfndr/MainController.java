@@ -74,8 +74,8 @@ public class MainController {
         int[][] path = new int[size][2];
 
         for (int i = 0; i < size; i++) {
-            path[i][0] = coordList.get(i).getL();
-            path[i][1] = coordList.get(i).getR();
+            path[i][0] = coordList.get(i).getR();
+            path[i][1] = coordList.get(i).getL();
         }
 
         solution.setSize(size);
@@ -84,6 +84,29 @@ public class MainController {
 
         return solution;
     }
+
+    /*
+    {
+        "n": 5,
+        "m": 5,
+        "x": 50,
+        "y": 50,
+        "minTan": -0.5,
+        "maxTan": 0.7,
+        "xH": 0,
+        "yH": 0,
+        "xT": 4,
+        "yT": 4,
+        "mx":
+        [
+          [1,1,1,2,2],
+          [1,3,4,3,2],
+          [1,5,8,5,1],
+          [2,3,4,1,1],
+          [2,2,1,1,1]
+        ]
+}
+     */
 
 
 }

@@ -69,6 +69,8 @@ public class GraphBuilder {
             return false;
         }
 
+        Node.idCounter = 0;
+
         xNet = X / m;
         yNet = Y / n;
 
