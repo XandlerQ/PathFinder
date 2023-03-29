@@ -1,3 +1,3 @@
 # PathFinder
 
-Maven IntelliJ backend, tomcat ready.
+Maven IntelliJ back-end, tomcat ready.
