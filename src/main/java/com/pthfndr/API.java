@@ -44,6 +44,8 @@ public class API extends HttpServlet {
 
         String responseJsonString = gson.toJson(solution);
 
+        response.setHeader("Access-Control-Allow-Origin", "*");
+
         response.getOutputStream().println(responseJsonString);
     }
     public static void main(String[] args) throws IOException {
