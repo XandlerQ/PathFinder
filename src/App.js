@@ -57,42 +57,22 @@ let flag = false;
 
 
 const App = (props) => {
-    //const mapRef = React.createRef();
     const [firstCoordStr, setFCoordStr] = useState("");
     const [secondCoordStr, setSCoordStr] = useState("");
     let [firstCoords, setFCoords] = useState(null);
     let [secondCoords, setSCoords] = useState(null);
 
     let [areaArr,setAreaArr] = useState(null);
-   // let[chebMetric, setChebMetric] = useState(0);
-    //let[obj,setObj] = useState(null);
     let[path, setPath] = useState(null);
-    //let[mxP, setmxP] = useState(null);
-    //let[size, setSize] = useState(null);
-    //setAreaArr([center, center]);
     let[hLattitude, setHLat] = useState(null);
     let[hLongitude, setHLng] = useState(null);
 
-    //setFCoords([0,0]);
-    //setSCoords([0,0]);
 
     const renderer = L.LeafletGeotiff.rgb();
 
     const options = {
-        // Optional, band index to use as R-band
-        //rBand: 0,
-        // Optional, band index to use as G-band
-        //gBand: 1,
-        // Optional, band index to use as B-band
-        //bBand: 2,
-        // band index to use as alpha-band
-        // NOTE: this can also be used in combination with transpValue, then referring to a
-        // color band specifying a fixed value to be interpreted as transparent
-        //alphaBand: 0,
-        // for all values equal to transpValue in the band alphaBand, the newly created alpha
-        // channel will be set to 0 (transparent), all other pixel values will result in alpha 255 (opaque)
         transpValue: 255,
-        useWorker: true,
+        useWorker: false,
         renderer: renderer,
     };
 
@@ -112,7 +92,6 @@ const App = (props) => {
         map.attributionControl.setPrefix('');
 
         if(!flag) {
-            //layer.addTo(map);
 
             map.addLayer(osm);
             var overlayMaps = {
@@ -176,8 +155,41 @@ const App = (props) => {
             <>
                 <Rectangle bounds={areaArr} pathOptions={blackOptions} />
             </>
+    )
+    }
+
+
+    function Path () {
+
+        if(path === null) {
+            return null;
+        }
+        let mxPath = new Array (path.length);
+
+
+        for (let i = 0; i < mxPath.length; i++) {
+            mxPath[i] = new Array(2);
+        }
+
+        for(let i = 0; i < path.length; i++) {
+            let lat = areaArr[0][0] + (399 - path[i][0]) * hLattitude;
+            let lng = areaArr[0][1] + (path[i][1]) * hLongitude;
+
+
+            mxPath[i][0] = lat;
+            mxPath[i][1] = lng;
+
+        }
+        
+
+
+        return (
+            <>
+                <Polyline positions={mxPath} pathOptions={redOptions} />
+            </>
         )
     }
+
 
 
     const onButtonSubmitClicked = () => {
@@ -219,7 +231,7 @@ const App = (props) => {
             let lat = areaArrTmp[0][0] + i * hLat;
             for(let j = 0; j < 400; j++) {
                 let lng = areaArrTmp[0][1] + j * hLng;
-                
+
                 mx[399 - i][j] = layer.getValueAtLatLng(lat,lng);
 
                 let absCoordsDiffHlat = 2*Math.abs(firstCoords[0] - lat);
@@ -246,7 +258,6 @@ const App = (props) => {
             }
         }
 
-
         const postObj = JSON.stringify({n: 400,
             m: 400,
             x:chebMetricTmp * 111139,
@@ -269,6 +280,9 @@ const App = (props) => {
                     return [parseInt(str[0]),parseInt(str[1])];
                 });
                 setPath(respPath);
+
+
+
             })
             .catch(function (error) {
                 console.log(error);
