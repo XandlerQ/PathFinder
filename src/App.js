@@ -1,11 +1,20 @@
-import {MapContainer, TileLayer, useMapEvents, Marker, useMap, LayersControl, LayerGroup, ImageOverlay} from 'react-leaflet'
+import {
+    MapContainer,
+    TileLayer,
+    useMapEvents,
+    Marker,
+    useMap,
+    LayersControl,
+    LayerGroup,
+    ImageOverlay,
+    Rectangle, Polyline
+} from 'react-leaflet'
 import "leaflet";
 import "leaflet-geotiff-2";
 import "leaflet-geotiff-2/dist/leaflet-geotiff-rgb";
 import "plotty"
 import "leaflet-geotiff-2/dist/leaflet-geotiff-plotty"
 
-//import "leaflet-geotiff"
 import React, {useState, useRef, useEffect, Component} from "react"
 import {TextField, Button, Grid, Typography, Paper, Card, AppBar, ThemeProvider, createTheme} from "@mui/material"
 import axios from "axios"
@@ -17,7 +26,6 @@ import '@fontsource/roboto/300.css'
 import './App.css'
 import 'leaflet/dist/leaflet.css'
 import SRTM from './viz.SRTMGL3_color-relief.tif'
-import {layers} from "leaflet/src/control/Control.Layers";
 
 
 let center = [55.76, 37.64];
@@ -54,6 +62,19 @@ const App = (props) => {
     const [secondCoordStr, setSCoordStr] = useState("");
     let [firstCoords, setFCoords] = useState(null);
     let [secondCoords, setSCoords] = useState(null);
+
+    let [areaArr,setAreaArr] = useState(null);
+   // let[chebMetric, setChebMetric] = useState(0);
+    //let[obj,setObj] = useState(null);
+    let[path, setPath] = useState(null);
+    //let[mxP, setmxP] = useState(null);
+    //let[size, setSize] = useState(null);
+    //setAreaArr([center, center]);
+    let[hLattitude, setHLat] = useState(null);
+    let[hLongitude, setHLng] = useState(null);
+
+    //setFCoords([0,0]);
+    //setSCoords([0,0]);
 
     const renderer = L.LeafletGeotiff.rgb();
 
@@ -117,10 +138,6 @@ const App = (props) => {
                     coords[0].toPrecision(8).toString() +
                     ", " +
                     coords[1].toPrecision(8).toString());
-
-
-                    let elevation = layer.getValueAtLatLng(e.latlng.lat,e.latlng.lng);
-                    console.log(elevation);
             },
 
         })
@@ -153,10 +170,70 @@ const App = (props) => {
         )
     }
 
-    const onButtonClicked = (e) => {
-        //axios.post(url, )
+    function Area() {
+
+        return areaArr === null ? null : (
+            <>
+                <Rectangle bounds={areaArr} pathOptions={blackOptions} />
+            </>
+        )
     }
 
+    function Path () {
+
+        if(path === null) {
+            return null;
+        }
+        let mxPath = new Array (path.length);
+
+
+        for (let i = 0; i < mxPath.length; i++) {
+            mxPath[i] = new Array(2);
+        }
+
+        for(let i = 0; i < path.length; i++) {
+            let lat = areaArr[0][0] + (399 - path[i][0]) * hLattitude;
+            let lng = areaArr[0][1] + (path[i][1]) * hLongitude;
+
+
+            mxPath[i][0] = lat;
+            mxPath[i][1] = lng;
+
+        }
+        
+
+
+        return (
+            <>
+                <Polyline positions={mxPath} pathOptions={redOptions} />
+            </>
+        )
+    }
+
+
+
+    const onButtonSubmitClicked = () => {
+        let absCoordsDiffA = 2 * Math.abs(firstCoords[0] - secondCoords[0]);
+        let absCoordsDiffB = Math.abs(firstCoords[1] - secondCoords[1]);
+
+        let chebMetricTmp = Math.max(absCoordsDiffA, absCoordsDiffB) * 1.2;
+
+        let sqCenter = [];
+        sqCenter.push((firstCoords[0] + secondCoords[0]) / 2, (firstCoords[1] + secondCoords[1]) / 2);
+
+        let areaArrTmp = [
+            [sqCenter[0] - (chebMetricTmp / 4), sqCenter[1] - (chebMetricTmp / 2)],
+            [sqCenter[0] + (chebMetricTmp / 4), sqCenter[1] + (chebMetricTmp / 2)]
+        ];
+
+       setAreaArr (areaArrTmp);
+        
+        
+
+    }
+
+    const blackOptions = { color: 'black' }
+    const redOptions = { color: 'red' }
 
     return(
         <ThemeProvider theme={darkTheme}>
@@ -176,9 +253,8 @@ const App = (props) => {
 
                     <LocationMarkerA />
                     <LocationMarkerB />
-
+                    <Area />
                 </MapContainer>
-
 
                 <Card>
                     <Typography variant="h7" component="h5">
@@ -235,12 +311,11 @@ const App = (props) => {
                             }}
                         />
                     </Grid>
-                    <Grid item xs={8}>
+                    <Grid item xs={8} >
                         <Button
                             variant="contained"
-                            onClick={(e) => {
-                                console.log("Button clicked")
-                            }}>
+                            onClick={ onButtonSubmitClicked }
+                        >
                             Submit
                         </Button>
                     </Grid>
