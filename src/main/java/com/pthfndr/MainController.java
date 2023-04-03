@@ -56,6 +56,7 @@ public class MainController {
         boolean result = solver.aStar();
         if (result) {
             solver.fillPath();
+            solver.printPathWeight();
             solver.printPathLength();
         }
         return result;
@@ -67,7 +68,8 @@ public class MainController {
 
     public PojoSolution getSolution() {
         PojoSolution solution = new PojoSolution();
-        double energy = solver.getPathLength();
+        double energy = solver.getPathWeight();
+        double length = solver.getPathLength();
         ArrayList<Pair<Integer, Integer>> coordList = converter.getGrBuilder().getCoordinateListByPath(solver.getPathIds());
         int size = coordList.size();
 
@@ -80,6 +82,7 @@ public class MainController {
 
         solution.setSize(size);
         solution.setEnergy(energy);
+        solution.setLength(length);
         solution.setPath(path);
 
         return solution;

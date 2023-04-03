@@ -2,6 +2,7 @@ package com.pthfndr;/*
 solution JSON format
 {
     "energy": 486,
+    "length": 320,
     "size": 20,
     "path":
     [
@@ -15,6 +16,7 @@ solution JSON format
 
 public class PojoSolution {
     private double energy;
+    private double length;
     private int size;
     private int[][] path;
 
@@ -26,12 +28,20 @@ public class PojoSolution {
 
     public double getEnergy() { return this.energy; }
 
+    public double getLength() {
+        return length;
+    }
+
     public int getSize() { return this.size; }
 
     public int[][] getPath() { return this.path; }
 
     public void setEnergy(double energy) {
         this.energy = energy;
+    }
+
+    public void setLength(double length) {
+        this.length = length;
     }
 
     public void setSize(int size) {

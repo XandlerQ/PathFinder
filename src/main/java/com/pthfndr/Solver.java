@@ -6,6 +6,7 @@ import java.util.Collections;
 
 public class Solver {
     private ArrayList<Integer> pathIds;
+    private double pathWeight;
     private double pathLength;
 
     private Node head, target;
@@ -14,6 +15,7 @@ public class Solver {
 
     Solver() {
         this.pathIds = new ArrayList<> ();
+        this.pathWeight = 0;
         this.pathLength = 0;
         this.head = null;
         this.target = null;
@@ -31,14 +33,19 @@ public class Solver {
         return pathIds;
     }
 
+    public double getPathWeight() {
+        return this.pathWeight;
+    }
+
     public double getPathLength() {
-        return this.pathLength;
+        return pathLength;
     }
 
     public boolean aStar(){
         if(head == null || target == null) return false;
 
         pathIds.clear();
+        pathWeight = 0;
         pathLength = 0;
 
         PriorityQueue<Node> closedList = new PriorityQueue<>();
@@ -50,23 +57,28 @@ public class Solver {
         while(!openList.isEmpty()){
             Node n = openList.peek();
             if(n == target){
-                pathLength = n.getG();
+                pathWeight = n.getG();
+                pathLength = n.getL();
                 return true;
             }
 
             for(Node.Edge edge : n.getNeighbours()){
                 Node m = edge.getNode();
                 double totalWeight = n.getG() + edge.getWeight();
+                double totalLength = n.getL() + edge.getLength();
+
 
                 if(!openList.contains(m) && !closedList.contains(m)){
                     m.setParent(n);
                     m.setG(totalWeight);
+                    m.setL(totalLength);
                     m.setF(m.getG() + m.getH());
                     openList.add(m);
                 } else {
                     if(totalWeight < m.getG()){
                         m.setParent(n);
                         m.setG(totalWeight);
+                        m.setL(totalLength);
                         m.setF(m.getG() + m.getH());
 
                         if(closedList.contains(m)){
@@ -95,6 +107,10 @@ public class Solver {
         }
         pathIds.add(n.getId());
         Collections.reverse(pathIds);
+    }
+
+    public void printPathWeight() {
+        System.out.println("\nPath weight: " + pathWeight + "\n");
     }
 
     public void printPathLength() {

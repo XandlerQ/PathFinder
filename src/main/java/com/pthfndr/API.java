@@ -29,6 +29,7 @@ public class API extends HttpServlet {
         String requestData = request.getReader().lines().collect(Collectors.joining());
         PojoHeightMatrix requestMatrix = new PojoHeightMatrix();
         requestMatrix = gson.fromJson(requestData, PojoHeightMatrix.class);
+        //System.out.println(requestData);
 
         Matrix matrix = new Matrix(requestMatrix.getN(), requestMatrix.getM());
         matrix.setVal(requestMatrix.getMx());
@@ -43,6 +44,8 @@ public class API extends HttpServlet {
         PojoSolution solution = controller.getSolution();
 
         String responseJsonString = gson.toJson(solution);
+        //System.out.println(responseJsonString);
+
 
         response.setHeader("Access-Control-Allow-Origin", "*");
 

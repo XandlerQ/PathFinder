@@ -22,6 +22,8 @@ public class Node implements Comparable<Node> {
     // Hardcoded heuristic
     private double h;
 
+    private double l = Double.MAX_VALUE; //Length function
+
     Node() {
         this.id = idCounter++;
         this.neighbours = new ArrayList<>();
@@ -59,6 +61,10 @@ public class Node implements Comparable<Node> {
         return h;
     }
 
+    public double getL() {
+        return l;
+    }
+
     public int getX() { return this.coordinates.getL(); }
 
     public int getY() { return this.coordinates.getR(); }
@@ -83,6 +89,10 @@ public class Node implements Comparable<Node> {
         this.h = h;
     }
 
+    public void setL(double l) {
+        this.l = l;
+    }
+
     //Methods
 
     @Override
@@ -90,8 +100,8 @@ public class Node implements Comparable<Node> {
         return Double.compare(this.f, n.f);
     }
 
-    public void addEdge(double weight, Node node) { //Add edge to node
-        Edge newEdge = new Edge(weight, node);
+    public void addEdge(double weight, double length, Node node) { //Add edge to node
+        Edge newEdge = new Edge(weight, length, node);
         this.neighbours.add(newEdge);
     }
 
@@ -102,17 +112,23 @@ public class Node implements Comparable<Node> {
 
     public static class Edge {
         private double weight;
+        private double length;
         private Node node;
 
         public double getWeight() {
             return weight;
         }
 
+        public double getLength() {
+            return length;
+        }
+
         public Node getNode() {
             return node;
         }
-        Edge(double weight, Node node) {
+        Edge(double weight, double length, Node node) {
             this.weight = weight;
+            this.length = length;
             this.node = node;
         }
     }

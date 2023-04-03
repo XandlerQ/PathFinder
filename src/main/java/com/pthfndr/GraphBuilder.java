@@ -86,6 +86,7 @@ public class GraphBuilder {
                 if (j == xH && i == yH){
                     head = currNode;
                     head.setG(0);
+                    head.setL(0);
                 }
                 if (j == xT && i == yT){
                     target = currNode;
@@ -172,7 +173,7 @@ public class GraphBuilder {
         double currHeight = heightMatrix.getVal(i, j);
         double h = heightMatrix.getVal(nI, nJ) - currHeight;
         if (validEdge(s, h)) {
-            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
+            currNode.addEdge(calculateWeight(s, h), calculateLength(s, h), nodes.get(nI * m + nJ));
         }
     }
 
@@ -184,7 +185,7 @@ public class GraphBuilder {
         double currHeight = heightMatrix.getVal(i, j);
         double h = heightMatrix.getVal(nI, nJ) - currHeight;
         if (validEdge(s, h)) {
-            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
+            currNode.addEdge(calculateWeight(s, h), calculateLength(s, h), nodes.get(nI * m + nJ));
         }
     }
 
@@ -196,7 +197,7 @@ public class GraphBuilder {
         double currHeight = heightMatrix.getVal(i, j);
         double h = heightMatrix.getVal(nI, nJ) - currHeight;
         if (validEdge(s, h)) {
-            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
+            currNode.addEdge(calculateWeight(s, h), calculateLength(s, h), nodes.get(nI * m + nJ));
         }
     }
 
@@ -208,7 +209,7 @@ public class GraphBuilder {
         double currHeight = heightMatrix.getVal(i, j);
         double h = heightMatrix.getVal(nI, nJ) - currHeight;
         if (validEdge(s, h)) {
-            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
+            currNode.addEdge(calculateWeight(s, h), calculateLength(s, h), nodes.get(nI * m + nJ));
         }
     }
 
@@ -220,7 +221,7 @@ public class GraphBuilder {
         double currHeight = heightMatrix.getVal(i, j);
         double h = heightMatrix.getVal(nI, nJ) - currHeight;
         if (validEdge(s, h)) {
-            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
+            currNode.addEdge(calculateWeight(s, h), calculateLength(s, h), nodes.get(nI * m + nJ));
         }
     }
 
@@ -232,7 +233,7 @@ public class GraphBuilder {
         double currHeight = heightMatrix.getVal(i, j);
         double h = heightMatrix.getVal(nI, nJ) - currHeight;
         if (validEdge(s, h)) {
-            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
+            currNode.addEdge(calculateWeight(s, h), calculateLength(s, h), nodes.get(nI * m + nJ));
         }
     }
 
@@ -244,7 +245,7 @@ public class GraphBuilder {
         double currHeight = heightMatrix.getVal(i, j);
         double h = heightMatrix.getVal(nI, nJ) - currHeight;
         if (validEdge(s, h)) {
-            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
+            currNode.addEdge(calculateWeight(s, h), calculateLength(s, h), nodes.get(nI * m + nJ));
         }
     }
 
@@ -256,7 +257,7 @@ public class GraphBuilder {
         double currHeight = heightMatrix.getVal(i, j);
         double h = heightMatrix.getVal(nI, nJ) - currHeight;
         if (validEdge(s, h)) {
-            currNode.addEdge(calculateWeight(s, h), nodes.get(nI * m + nJ));
+            currNode.addEdge(calculateWeight(s, h), calculateLength(s, h), nodes.get(nI * m + nJ));
         }
     }
 
@@ -292,6 +293,10 @@ public class GraphBuilder {
         else { //Center node
             return 0;
         }
+    }
+
+    private double calculateLength(double s, double h) {
+        return Math.sqrt(s * s + h * h);
     }
 
     private double calculateWeight(double s, double h) {
