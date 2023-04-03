@@ -19,6 +19,8 @@ public class DataConverter {
     double maxTan;
     double minTan;
 
+    double friction;
+
     double X, Y;
 
 
@@ -35,6 +37,7 @@ public class DataConverter {
         this.maxElevation = 0;
         this.maxTan = 1;
         this.minTan = 0;
+        this.friction = 0;
         this.X = 0;
         this.Y = 0;
     }
@@ -51,6 +54,8 @@ public class DataConverter {
     public void setMinTan(double minTan) {
         this.minTan = minTan;
     }
+
+    public void setFriction(double friction) { this.friction = friction; }
 
     public void setMinElevation(double minElevation) {
         this.minElevation = minElevation;
@@ -108,6 +113,7 @@ public class DataConverter {
         grBuilder.setSize(imageHeight, imageWidth);
         grBuilder.setMaxTan(maxTan);
         grBuilder.setMinTan(minTan);
+        grBuilder.setFriction(friction);
         return grBuilder.buildGraph(xH, yH, xT, yT, this.heightMatrix);
     }
 

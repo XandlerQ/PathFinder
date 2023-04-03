@@ -37,6 +37,8 @@ public class API extends HttpServlet {
         controller.setHeigthMatrix(matrix);
         controller.setMinTan(requestMatrix.getMinTan());
         controller.setMaxTan(requestMatrix.getMaxTan());
+        controller.setFriction(requestMatrix.getFriction());
+        System.out.println(requestMatrix.getFriction());
         controller.setDimensions(requestMatrix.getX(), requestMatrix.getY());
         controller.setImageSize(requestMatrix.getN(), requestMatrix.getM());
         controller.buildGraph(requestMatrix.getxH(), requestMatrix.getyH(), requestMatrix.getxT(), requestMatrix.getyT());

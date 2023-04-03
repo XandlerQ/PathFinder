@@ -7,6 +7,7 @@ package com.pthfndr;
         "y": 10000,
         "minTan": -0.5,
         "maxTan": +0.7,
+        "friction": 0.02,
         "xH": 20,
         "yH": 20,
         "xT": 380,
@@ -28,6 +29,7 @@ public class PojoHeightMatrix {
     private double y;
     private double minTan;
     private double maxTan;
+    private double friction;
     private int xH;
     private int yH;
     private int xT;
@@ -43,6 +45,11 @@ public class PojoHeightMatrix {
         this.y = 0;
         this.minTan = 0;
         this.maxTan = 0;
+        this.friction = 0;
+        this.xH = 0;
+        this.yH = 0;
+        this.xT = 0;
+        this.yT = 0;
         this.mx = null;
     }
 
@@ -75,6 +82,10 @@ public class PojoHeightMatrix {
 
     public double getMaxTan() {
         return maxTan;
+    }
+
+    public double getFriction() {
+        return friction;
     }
 
     public int getxH() {
@@ -119,6 +130,10 @@ public class PojoHeightMatrix {
 
     public void setMaxTan(double maxTan) {
         this.maxTan = maxTan;
+    }
+
+    public void setFriction(double friction) {
+        this.friction = friction;
     }
 
     public void setxH(int xH) {

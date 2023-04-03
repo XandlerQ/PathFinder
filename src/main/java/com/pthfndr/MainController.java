@@ -30,6 +30,8 @@ public class MainController {
         converter.setMinTan(minTan);
     }
 
+    public void setFriction(double friction) { converter.setFriction(friction); }
+
     public void setMinElevation(double minElevation) {
         this.converter.setMinElevation(minElevation);
     }

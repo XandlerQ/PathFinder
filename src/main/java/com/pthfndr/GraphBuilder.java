@@ -12,6 +12,7 @@ public class GraphBuilder {
     private double diagonalS;
     private double maxTan;
     private double minTan;
+    private double friction;
 
     private ArrayList<Node> nodes;
 
@@ -26,6 +27,7 @@ public class GraphBuilder {
         this.yNet = 0;
         this.maxTan = 0;
         this.minTan = 0;
+        this.friction = 0.02;
         this.nodes = null;
     }
 
@@ -52,7 +54,9 @@ public class GraphBuilder {
     public void setMinTan(double minTan) {
         this.minTan = minTan;
     }
-
+    public void setFriction(double friction) {
+        this.friction = friction;
+    }
 
     public void setDimensions(double X, double Y) { this.X = X; this.Y = Y; }
 
@@ -301,10 +305,10 @@ public class GraphBuilder {
 
     private double calculateWeight(double s, double h) {
         if (h > 0) {
-            return h + 0.02 * s;
+            return h + friction * s;
         }
         else {
-            return 0.02 * s;
+            return friction * s;
         }
     }
 

@@ -43,7 +43,7 @@ public class Solver {
 
     public boolean aStar(){
         if(head == null || target == null) return false;
-
+        System.out.println("Solution init");
         pathIds.clear();
         pathWeight = 0;
         pathLength = 0;
@@ -94,6 +94,12 @@ public class Solver {
         }
         return false;
     }
+
+    /*public boolean dijkstra() {
+        if(head == null || target == null) return false;
+
+
+    }*/
 
     public void fillPath(){
         Node n = target;
