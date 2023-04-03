@@ -16,7 +16,18 @@ import "plotty"
 import "leaflet-geotiff-2/dist/leaflet-geotiff-plotty"
 
 import React, {useState, useRef, useEffect, Component} from "react"
-import {TextField, Button, Grid, Typography, Paper, Card, AppBar, ThemeProvider, createTheme} from "@mui/material"
+import {
+    TextField,
+    Button,
+    Typography,
+    Paper,
+    Card,
+    AppBar,
+    Grid,
+    ThemeProvider,
+    createTheme,
+    Slider
+} from "@mui/material"
 import axios from "axios"
 import markerA from './marker-a.svg'
 import markerB from './marker-b.svg'
@@ -66,6 +77,10 @@ const App = (props) => {
     let[path, setPath] = useState(null);
     let[hLattitude, setHLat] = useState(null);
     let[hLongitude, setHLng] = useState(null);
+    let[minTanSl, setMinTanSl] = useState(-0.7);
+    let[maxTanSl, setMaxTanSl] = useState(0.7);
+    let[fricSl, setFricSl] = useState(0.02);
+
 
 
     const renderer = L.LeafletGeotiff.rgb();
@@ -80,6 +95,28 @@ const App = (props) => {
     let layer = L.leafletGeotiff(SRTM, options);
 
 
+    function SetHeightOnChange() {
+
+         const map = useMap();
+         const mapContainer = map.getContainer();
+         if (map != null) {
+             map.invalidateSize();
+         }
+
+         return null;
+    }
+
+    const handleSlider1Change = (event, newValue) => {
+        setMinTanSl(newValue);
+    };
+
+    const handleSlider2Change = (event, newValue) => {
+        setMaxTanSl(newValue);
+    };
+
+    const handleSlider3Change = (event, newValue) => {
+        setFricSl(newValue);
+    };
 
     function GeoLayer() {
 
@@ -92,7 +129,6 @@ const App = (props) => {
         map.attributionControl.setPrefix('');
 
         if(!flag) {
-
             map.addLayer(osm);
             var overlayMaps = {
                 "GeoTIFF": layer
@@ -155,9 +191,8 @@ const App = (props) => {
             <>
                 <Rectangle bounds={areaArr} pathOptions={blackOptions} />
             </>
-    )
+        )
     }
-
 
     function Path () {
 
@@ -189,8 +224,6 @@ const App = (props) => {
             </>
         )
     }
-
-
 
     const onButtonSubmitClicked = () => {
         let absCoordsDiffA = 2 * Math.abs(firstCoords[0] - secondCoords[0]);
@@ -257,13 +290,13 @@ const App = (props) => {
 
             }
         }
-
         const postObj = JSON.stringify({n: 400,
             m: 400,
             x:chebMetricTmp * 111139,
             y: (chebMetricTmp / 2) * 111139,
-            minTan: -0.5,
-            maxTan: 0.7,
+            minTan: minTanSl,
+            maxTan: maxTanSl,
+            friction: fricSl,
             xH: xH,
             yH: yH,
             xT: xT,
@@ -287,6 +320,12 @@ const App = (props) => {
             .catch(function (error) {
                 console.log(error);
             });
+
+
+
+
+
+
     }
 
     const blackOptions = { color: 'black' }
@@ -294,90 +333,178 @@ const App = (props) => {
 
     return(
         <ThemeProvider theme={darkTheme}>
-            <Paper elevation = {5}>
-                <AppBar position="static" color="primary">
-                    <Typography variant="h6" color="inherit" component="div">
-                        PathFinder
-                    </Typography>
-                </AppBar>
-
-                <MapContainer
-                    center={center}
-                    zoom={13}
-                    scrollWheelZoom={true}
+            <Paper elevation = {6}>
+                <Grid container
+                      direction='column'
+                      rowSpacing={0}
+                      columnSpacing={0}
+                      justifyContent='center'
+                      alignItems='center'
                 >
-                    <GeoLayer />
+                    <Grid
+                        container
+                        direction='column'
+                        rowSpacing={0}
+                        columnSpacing={0}
+                        justifyContent='center'
+                        alignItems='center'
+                    >
+                        <Grid item xs='auto' >
+                            <AppBar position="static" color="primary">
+                                <Typography variant="h6" color="inherit" component="div">
+                                    PathFinder
+                                </Typography>
+                            </AppBar>
+                        </Grid>
 
-                    <LocationMarkerA />
-                    <LocationMarkerB />
-                    <Area />
-                    <Path />
-                </MapContainer>
+                        <Grid item xs={8}>
+                            <MapContainer
+                                center={center}
+                                zoom={13}
+                                scrollWheelZoom={true}
+                            >
+                                <GeoLayer />
 
-                <Card>
-                    <Typography variant="h7" component="h5">
-                        LMB on map to pick first coordinate. RMB on map to pick second coordinate.
-                    </Typography>
+                                <LocationMarkerA />
+                                <LocationMarkerB />
+                                <Area />
+                                <Path />
+                                <SetHeightOnChange />
+                            </MapContainer>
+                        </Grid>
+                        <Grid item xs='auto'>
+                            <Card>
+                                <Typography variant="h7" component="h5">
+                                    LMB on map to pick first coordinate. RMB on map to pick second coordinate.
+                                </Typography>
 
-                </Card>
+                            </Card>
+                        </Grid>
 
-                <Grid
-                    container
-                    direction='column'
-                    rowSpacing = {0.4}
-                    justifyContent='space-evenly'
-                    alignItems='center'
-                >
-                    <Grid item xs={8}>
-                        <Typography variant="h4" component="h2">
-                            Inputed coordinates
-                        </Typography>
                     </Grid>
-                    <Grid item xs={8}>
-                        <TextField
-                            variant="filled"
-                            value={firstCoordStr}
-                            label="First coordinate"
-                            onChange={(e) => {
-                                setFCoordStr(e.target.value);
-                            }}
-                            onKeyPress={(e) => {
-                                if (e.key === 'Enter') {
-                                    let str = e.target.value;
-                                    setFCoords(str.split(',').map(function(item) {
-                                        return parseFloat(item);
-                                    }))
-                                }
-                            }}
-                        />
+                    <Grid container
+                          direction='row'
+                          rowSpacing={0}
+                          columnSpacing={4}
+                          justifyContent='center'
+                          alignItems='center'
+                    >
+                        <Grid item xs={'auto'}>
+                            <TextField
+                                variant="filled"
+                                value={firstCoordStr}
+                                label="First coordinate"
+                                onChange={(e) => {
+                                    setFCoordStr(e.target.value);
+                                }}
+                                onKeyPress={(e) => {
+                                    if (e.key === 'Enter') {
+                                        let str = e.target.value;
+                                        setFCoords(str.split(',').map(function(item) {
+                                            return parseFloat(item);
+                                        }))
+                                    }
+                                }}
+                            />
+                        </Grid>
+                        <Grid item xs='auto'>
+                            <TextField
+                                variant="filled"
+                                value={secondCoordStr}
+                                label="Second coordinate"
+                                onChange={(e) => {
+                                    setSCoordStr(e.target.value);
+                                }}
+                                onKeyPress={(e) => {
+                                    if (e.key === 'Enter') {
+                                        let str = e.target.value;
+                                        setSCoords(str.split(',').map(function(item) {
+                                            return parseFloat(item);
+                                        }))
+                                    }
+                                }}
+                            />
+                        </Grid>
                     </Grid>
-                    <Grid item xs={8}>
-                        <TextField
-                            variant="filled"
-                            value={secondCoordStr}
-                            label="Second coordinate"
-                            onChange={(e) => {
-                                setSCoordStr(e.target.value);
-                            }}
-                            onKeyPress={(e) => {
-                                if (e.key === 'Enter') {
-                                    let str = e.target.value;
-                                    setSCoords(str.split(',').map(function(item) {
-                                        return parseFloat(item);
-                                    }))
-                                }
-                            }}
-                        />
+                    <Grid container
+                          direction='row'
+                          rowSpacing={3}
+                          columnSpacing={4}
+                          justifyContent='center'
+                          alignItems='center'
+                    >
+                        <Grid item xs={3}>
+                            <Paper elevation={1} >
+                                <Typography variant="h6" component="h3">
+                                    minTan
+                                </Typography>
+                                <Slider
+                                    aria-label="minTan"
+                                    defaultValue={-0.7}
+                                    //getAriaValueText={sliderValue}
+                                    valueLabelDisplay="auto"
+                                    step={0.1}
+                                    marks
+                                    min={-2}
+                                    max={0}
+                                    onChange={handleSlider1Change}
+                                />
+                            </Paper>
+                        </Grid>
+                        <Grid item xs={3}>
+                            <Paper elevation={1} >
+                                <Typography variant="h6" component="h3">
+                                    maxTan
+                                </Typography>
+                                <Slider
+                                    aria-label="maxTan"
+                                    defaultValue={0.7}
+                                    valueLabelDisplay="auto"
+                                    step={0.1}
+                                    marks
+                                    min={0}
+                                    max={2}
+                                    onChange={handleSlider2Change}
+                                />
+                            </Paper>
+                        </Grid>
+                        <Grid item xs={3}>
+                            <Paper elevation={1} >
+                                <Typography variant="h6" component="h3">
+                                    Friction
+                                </Typography>
+                                <Slider
+                                    aria-label="Friction"
+                                    defaultValue={0.02}
+                                    valueLabelDisplay="auto"
+                                    step={0.0001}
+                                    min={0}
+                                    max={0.1}
+                                    onChange={handleSlider3Change}
+                                />
+                            </Paper>
+
+                        </Grid>
                     </Grid>
-                    <Grid item xs={8} >
-                        <Button
-                            variant="contained"
-                            onClick={ onButtonSubmitClicked }
-                        >
-                            Submit
-                        </Button>
+                    <Grid container
+                          direction='row'
+                          rowSpacing={3}
+                          columnSpacing={4}
+                          justifyContent='center'
+                          alignItems='center'
+                    >
+                        <Grid item>
+                            <Button
+                                variant="contained"
+                                onClick={ onButtonSubmitClicked }
+                            >
+                                Submit
+                            </Button>
+                        </Grid>
                     </Grid>
                 </Grid>
+
+
             </Paper>
         </ThemeProvider>
 
