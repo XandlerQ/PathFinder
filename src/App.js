@@ -37,6 +37,8 @@ import '@fontsource/roboto/300.css'
 import './App.css'
 import 'leaflet/dist/leaflet.css'
 import SRTM from './viz.SRTMGL3_color-relief.tif'
+import USGS from './viz.USGS30m_color-relief.tif'
+import NASA from './viz.NASADEM_color-relief.tif'
 
 
 let center = [55.76, 37.64];
@@ -65,6 +67,17 @@ const darkTheme = createTheme({
 
 let flag = false;
 
+const renderer = L.LeafletGeotiff.rgb();
+
+const options = {
+    transpValue: 255,
+    useWorker: true,
+    renderer: renderer,
+};
+
+const layer = L.leafletGeotiff(NASA, options);
+
+
 
 
 const App = (props) => {
@@ -80,20 +93,6 @@ const App = (props) => {
     let[minTanSl, setMinTanSl] = useState(-0.7);
     let[maxTanSl, setMaxTanSl] = useState(0.7);
     let[fricSl, setFricSl] = useState(0.02);
-
-
-
-    const renderer = L.LeafletGeotiff.rgb();
-
-    const options = {
-        transpValue: 255,
-        useWorker: false,
-        renderer: renderer,
-    };
-
-
-    let layer = L.leafletGeotiff(SRTM, options);
-
 
     function SetHeightOnChange() {
 
@@ -153,6 +152,7 @@ const App = (props) => {
                     coords[0].toPrecision(8).toString() +
                     ", " +
                     coords[1].toPrecision(8).toString());
+
             },
 
         })
@@ -229,7 +229,7 @@ const App = (props) => {
         let absCoordsDiffA = 2 * Math.abs(firstCoords[0] - secondCoords[0]);
         let absCoordsDiffB = Math.abs(firstCoords[1] - secondCoords[1]);
 
-        let chebMetricTmp = Math.max(absCoordsDiffA, absCoordsDiffB) * 1.2;
+        let chebMetricTmp = Math.max(absCoordsDiffA, absCoordsDiffB) * 1.02;
 
         let sqCenter = [];
         sqCenter.push((firstCoords[0] + secondCoords[0]) / 2, (firstCoords[1] + secondCoords[1]) / 2);
@@ -240,8 +240,9 @@ const App = (props) => {
         ];
 
        setAreaArr (areaArrTmp) ;
-        
-        
+
+
+
         let mx = new Array (400);
 
         for (let i = 0; i < mx.length; i++) {
@@ -260,12 +261,17 @@ const App = (props) => {
         let hLng = chebMetricTmp / 400;
         setHLat(hLat);
         setHLng(hLng);
+
         for(let i = 399; i >= 0; i--) {
             let lat = areaArrTmp[0][0] + i * hLat;
+            //console.log(lat);
             for(let j = 0; j < 400; j++) {
                 let lng = areaArrTmp[0][1] + j * hLng;
+                //console.log(lng);
+                let eleVal = layer.getValueAtLatLng(lat,lng);
+                mx[399 - i][j] = eleVal;
 
-                mx[399 - i][j] = layer.getValueAtLatLng(lat,lng);
+                //console.log(layer.getValueAtLatLng(lat,lng));
 
                 let absCoordsDiffHlat = 2*Math.abs(firstCoords[0] - lat);
                 let absCoordsDiffHlng = Math.abs(firstCoords[1] - lng);
@@ -290,9 +296,11 @@ const App = (props) => {
 
             }
         }
-        const postObj = JSON.stringify({n: 400,
+
+        const postObj = JSON.stringify({
+            n: 400,
             m: 400,
-            x:chebMetricTmp * 111139,
+            x: chebMetricTmp * 111139,
             y: (chebMetricTmp / 2) * 111139,
             minTan: minTanSl,
             maxTan: maxTanSl,
@@ -305,7 +313,7 @@ const App = (props) => {
         });
 
 
-        axios.post("http://26.213.110.200:8080/PathFinder/data", postObj)
+        axios.post("http://localhost:8080/PathFinder/data", postObj)
             .then(function (response) {
                 console.log(response);
 
@@ -320,12 +328,6 @@ const App = (props) => {
             .catch(function (error) {
                 console.log(error);
             });
-
-
-
-
-
-
     }
 
     const blackOptions = { color: 'black' }
