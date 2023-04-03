@@ -36,11 +36,19 @@ public class API extends HttpServlet {
 
         controller.setHeigthMatrix(matrix);
         controller.setMinTan(requestMatrix.getMinTan());
+        System.out.println(requestMatrix.getMinTan());
+
         controller.setMaxTan(requestMatrix.getMaxTan());
+        System.out.println(requestMatrix.getMaxTan());
+
         controller.setFriction(requestMatrix.getFriction());
         System.out.println(requestMatrix.getFriction());
+
         controller.setDimensions(requestMatrix.getX(), requestMatrix.getY());
         controller.setImageSize(requestMatrix.getN(), requestMatrix.getM());
+        System.out.println(requestMatrix.getX() + " " + requestMatrix.getY());
+        System.out.println(requestMatrix.getN() + " " + requestMatrix.getM());
+
         controller.buildGraph(requestMatrix.getxH(), requestMatrix.getyH(), requestMatrix.getxT(), requestMatrix.getyT());
         controller.initSolve();
         PojoSolution solution = controller.getSolution();
