@@ -2,7 +2,6 @@ package com.pthfndr;
 
 import java.lang.String;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.stream.Collectors;
 
 import jakarta.servlet.ServletException;
@@ -43,6 +42,8 @@ public class API extends HttpServlet {
 
         controller.setFriction(requestMatrix.getFriction());
         System.out.println(requestMatrix.getFriction());
+
+        controller.setwElevation(requestMatrix.getwElevation());
 
         controller.setDimensions(requestMatrix.getX(), requestMatrix.getY());
         controller.setImageSize(requestMatrix.getN(), requestMatrix.getM());

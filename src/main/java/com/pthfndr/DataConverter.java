@@ -14,12 +14,13 @@ public class DataConverter {
     private File inputFile;
     private BufferedImage bImage;
     public int imageWidth, imageHeight;
-    double minElevation, maxElevation;
+    private double minElevation, maxElevation;
 
-    double maxTan;
-    double minTan;
+    private double maxTan;
+    private double minTan;
 
-    double friction;
+    private double friction;
+    private double wElevation;
 
     double X, Y;
 
@@ -38,6 +39,7 @@ public class DataConverter {
         this.maxTan = 1;
         this.minTan = 0;
         this.friction = 0;
+        this.wElevation = 0;
         this.X = 0;
         this.Y = 0;
     }
@@ -56,6 +58,10 @@ public class DataConverter {
     }
 
     public void setFriction(double friction) { this.friction = friction; }
+
+    public void setwElevation(double wElevation) {
+        this.wElevation = wElevation;
+    }
 
     public void setMinElevation(double minElevation) {
         this.minElevation = minElevation;
@@ -114,6 +120,7 @@ public class DataConverter {
         grBuilder.setMaxTan(maxTan);
         grBuilder.setMinTan(minTan);
         grBuilder.setFriction(friction);
+        grBuilder.setwElevation(wElevation);
         return grBuilder.buildGraph(xH, yH, xT, yT, this.heightMatrix);
     }
 
