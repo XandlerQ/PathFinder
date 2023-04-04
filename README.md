@@ -1,6 +1,6 @@
 # PathFinder
 
-## Web application for determining the shortest path between two points on the map.
+## Web application for determining the shortest path between two points on the map considering given topographical GeoTIFF elevation raster.
 
 Web-front uses [Leaflet open-source JavaScript library](https://github.com/Leaflet/Leaflet) for the map widget. Altitude is determined via [leaflet-geotiff-2](https://github.com/onaci/leaflet-geotiff-2) Leaflet plugin. Testing raster GeoTIFF file was aquired from [OpenTopography](https://opentopography.org).
 
