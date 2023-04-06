@@ -12,8 +12,6 @@ import {
 import "leaflet";
 import "leaflet-geotiff-2";
 import "leaflet-geotiff-2/dist/leaflet-geotiff-rgb";
-import "plotty"
-import "leaflet-geotiff-2/dist/leaflet-geotiff-plotty"
 
 import React, {useState, useRef, useEffect, Component} from "react"
 import {
@@ -31,8 +29,6 @@ import {
 import axios from "axios"
 import markerA from './marker-a.svg'
 import markerB from './marker-b.svg'
-import bonfire1 from './bonfire1.png'
-import bonfire2 from './bonfire2.png'
 import '@fontsource/roboto/300.css'
 import './App.css'
 import 'leaflet/dist/leaflet.css'
@@ -75,6 +71,9 @@ const options = {
     renderer: renderer,
 };
 
+//const raster = fromFile(NASA);
+
+
 const layer = L.leafletGeotiff(NASA, options);
 
 
@@ -85,7 +84,6 @@ const App = (props) => {
     const [secondCoordStr, setSCoordStr] = useState("");
     let [firstCoords, setFCoords] = useState(null);
     let [secondCoords, setSCoords] = useState(null);
-
     let [areaArr,setAreaArr] = useState(null);
     let[path, setPath] = useState(null);
     let[hLattitude, setHLat] = useState(null);
@@ -119,8 +117,16 @@ const App = (props) => {
 
     function GeoLayer() {
 
-        var osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap'
+        // var osm = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+        //     attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+        // });
+
+        var Stamen_Terrain = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}{r}.{ext}', {
+            attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            subdomains: 'abcd',
+            minZoom: 0,
+            maxZoom: 18,
+            ext: 'png'
         });
 
         const map = useMap();
@@ -128,13 +134,13 @@ const App = (props) => {
         map.attributionControl.setPrefix('');
 
         if(!flag) {
-            map.addLayer(osm);
+            map.addLayer(Stamen_Terrain);
             var overlayMaps = {
                 "GeoTIFF": layer
             };
 
             var baseMaps = {
-                "OpenStreetMap": osm,
+                "OpenStreetMap": Stamen_Terrain,
             };
             let layerControl = L.control.layers(baseMaps, overlayMaps).addTo(map);
             flag = true;
@@ -337,6 +343,7 @@ const App = (props) => {
         <ThemeProvider theme={darkTheme}>
             <Paper elevation = {6}>
                 <Grid container
+
                       direction='column'
                       rowSpacing={0}
                       columnSpacing={0}
@@ -344,6 +351,7 @@ const App = (props) => {
                       alignItems='center'
                 >
                     <Grid
+                        sx={{ p: 1 }}
                         container
                         direction='column'
                         rowSpacing={0}
@@ -385,6 +393,7 @@ const App = (props) => {
 
                     </Grid>
                     <Grid container
+                          sx={{ p: 1 }}
                           direction='row'
                           rowSpacing={0}
                           columnSpacing={4}
@@ -429,6 +438,7 @@ const App = (props) => {
                         </Grid>
                     </Grid>
                     <Grid container
+                          sx={{ p: 1 }}
                           direction='row'
                           rowSpacing={3}
                           columnSpacing={4}
@@ -489,6 +499,7 @@ const App = (props) => {
                         </Grid>
                     </Grid>
                     <Grid container
+                          sx={{ p: 1 }}
                           direction='row'
                           rowSpacing={3}
                           columnSpacing={4}
