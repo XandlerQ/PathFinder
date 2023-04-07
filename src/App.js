@@ -74,7 +74,7 @@ const options = {
 //const raster = fromFile(NASA);
 
 
-const layer = L.leafletGeotiff(NASA, options);
+const layer = L.leafletGeotiff(SRTM, options);
 
 
 
@@ -119,8 +119,8 @@ const App = (props) => {
 
     function GeoLayer() {
 
-        var osm = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-            attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+        var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
         });
 
         var Stamen_Terrain = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}{r}.{ext}', {
@@ -241,18 +241,6 @@ const App = (props) => {
         return null;
     }
 
-    function Line () {
-        if(mPath === null) {
-            return null;
-        }
-
-        return (
-        <>
-            <Polyline positions={mPath} pathOptions={redOptions} />
-        </>
-        )
-    }
-
     const onButtonSubmitClicked = () => {
         let absCoordsDiffA = 2 * Math.abs(firstCoords[0] - secondCoords[0]);
         let absCoordsDiffB = Math.abs(firstCoords[1] - secondCoords[1]);
@@ -333,6 +321,7 @@ const App = (props) => {
             minTan: minTanSl,
             maxTan: maxTanSl,
             friction: fricSl,
+            wElevation: 20,
             xH: xH,
             yH: yH,
             xT: xT,
