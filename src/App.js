@@ -24,7 +24,7 @@ import {
     Grid,
     ThemeProvider,
     createTheme,
-    Slider
+    Slider, Tooltip
 } from "@mui/material"
 import axios from "axios"
 import markerA from './marker-a.svg'
@@ -85,7 +85,9 @@ const App = (props) => {
     let [firstCoords, setFCoords] = useState(null);
     let [secondCoords, setSCoords] = useState(null);
     let [areaArr,setAreaArr] = useState(null);
+    let [prevPath, setPrevPath] = useState(null);
     let[path, setPath] = useState(null);
+    let[mPath, setMPath] = useState(null);
     let[hLattitude, setHLat] = useState(null);
     let[hLongitude, setHLng] = useState(null);
     let[minTanSl, setMinTanSl] = useState(-0.7);
@@ -117,9 +119,9 @@ const App = (props) => {
 
     function GeoLayer() {
 
-        // var osm = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-        //     attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
-        // });
+        var osm = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+            attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+        });
 
         var Stamen_Terrain = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}{r}.{ext}', {
             attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -134,13 +136,13 @@ const App = (props) => {
         map.attributionControl.setPrefix('');
 
         if(!flag) {
-            map.addLayer(Stamen_Terrain);
+            map.addLayer(osm);
             var overlayMaps = {
                 "GeoTIFF": layer
             };
 
             var baseMaps = {
-                "OpenStreetMap": Stamen_Terrain,
+                "OpenStreetMap": osm,
             };
             let layerControl = L.control.layers(baseMaps, overlayMaps).addTo(map);
             flag = true;
@@ -201,10 +203,17 @@ const App = (props) => {
     }
 
     function Path () {
+        const map = useMap();
 
         if(path === null) {
+             return null;
+        }
+
+        if(path === prevPath) {
             return null;
         }
+
+
         let mxPath = new Array (path.length);
 
 
@@ -221,13 +230,26 @@ const App = (props) => {
             mxPath[i][1] = lng;
 
         }
-        
 
+        //setMPath(mxPath);
+        let tech = path;
+        setPrevPath(tech);
+
+        let polyline = L.polyline(mxPath, redOptions).addTo(map);
+
+
+        return null;
+    }
+
+    function Line () {
+        if(mPath === null) {
+            return null;
+        }
 
         return (
-            <>
-                <Polyline positions={mxPath} pathOptions={redOptions} />
-            </>
+        <>
+            <Polyline positions={mPath} pathOptions={redOptions} />
+        </>
         )
     }
 
@@ -447,9 +469,11 @@ const App = (props) => {
                     >
                         <Grid item xs={3}>
                             <Paper elevation={1} >
-                                <Typography variant="h6" component="h3">
-                                    minTan
-                                </Typography>
+                                <Tooltip title="Минимальный тангенс" >
+                                    <Typography variant="h6" component="h3">
+                                        minTan
+                                    </Typography>
+                                </Tooltip>
                                 <Slider
                                     aria-label="minTan"
                                     defaultValue={-0.7}
@@ -465,9 +489,11 @@ const App = (props) => {
                         </Grid>
                         <Grid item xs={3}>
                             <Paper elevation={1} >
-                                <Typography variant="h6" component="h3">
-                                    maxTan
-                                </Typography>
+                                <Tooltip title="Максимальный тангенс" >
+                                    <Typography variant="h6" component="h3">
+                                        maxTan
+                                    </Typography>
+                                </Tooltip>
                                 <Slider
                                     aria-label="maxTan"
                                     defaultValue={0.7}
@@ -482,9 +508,11 @@ const App = (props) => {
                         </Grid>
                         <Grid item xs={3}>
                             <Paper elevation={1} >
-                                <Typography variant="h6" component="h3">
-                                    Friction
-                                </Typography>
+                                <Tooltip title="Коэффициент трения" >
+                                    <Typography variant="h6" component="h3">
+                                        Friction
+                                    </Typography>
+                                </Tooltip>
                                 <Slider
                                     aria-label="Friction"
                                     defaultValue={0.02}
