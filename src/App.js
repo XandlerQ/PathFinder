@@ -93,6 +93,7 @@ const App = (props) => {
     let[minTanSl, setMinTanSl] = useState(-0.7);
     let[maxTanSl, setMaxTanSl] = useState(0.7);
     let[fricSl, setFricSl] = useState(0.02);
+    let[pathIdx, setPathIdx] = useState(0);
 
     function SetHeightOnChange() {
 
@@ -161,6 +162,8 @@ const App = (props) => {
                     ", " +
                     coords[1].toPrecision(8).toString());
 
+                console.log(layer.getValueAtLatLng(e.latlng.lat, e.latlng.lng));
+
             },
 
         })
@@ -202,8 +205,9 @@ const App = (props) => {
         )
     }
 
-    function Path () {
+    function Path() {
         const map = useMap();
+
 
         if(path === null) {
              return null;
@@ -213,6 +217,7 @@ const App = (props) => {
             return null;
         }
 
+        console.log("path");
 
         let mxPath = new Array (path.length);
 
@@ -233,9 +238,60 @@ const App = (props) => {
 
         //setMPath(mxPath);
         let tech = path;
+
         setPrevPath(tech);
 
-        let polyline = L.polyline(mxPath, redOptions).addTo(map);
+
+
+
+        let colorOptions;
+        let idx = pathIdx;
+
+        switch (idx % 5) {
+            case 0: {
+                colorOptions = redOptions;
+                break;
+            }
+            case 1: {
+                colorOptions = greenOptions;
+                break;
+            }
+            case 2: {
+                colorOptions = purpleOptions;
+                break;
+            }
+            case 3: {
+                colorOptions = blueOptions;
+                break;
+            }
+            case 4: {
+                colorOptions = orangeOptions;
+                break;
+            }
+            default: {
+                colorOptions = null;
+            }
+        }
+        if (idx >= 5) {
+            for(let i in map._layers) {
+                if(map._layers[i]._path != undefined) {
+                        try {
+                            map.removeLayer(map._layers[i]);
+                            break;
+                        }
+                        catch(e) {
+                            console.log("problem with " + e + map._layers[i]);
+                            break;
+                        }
+                }
+            }
+        }
+        setPathIdx(idx + 1);
+
+
+
+        let polyline = L.polyline(mxPath, colorOptions).addTo(map);
+        setPath(null);
 
 
         return null;
@@ -255,16 +311,15 @@ const App = (props) => {
             [sqCenter[0] + (chebMetricTmp / 4), sqCenter[1] + (chebMetricTmp / 2)]
         ];
 
-       setAreaArr (areaArrTmp) ;
+        setAreaArr(areaArrTmp);
 
 
-
-        let mx = new Array (400);
+        let mx = new Array(400);
 
         for (let i = 0; i < mx.length; i++) {
             mx[i] = new Array(400);
         }
-        
+
 
         let xH = 0;
         let yH = 0;
@@ -278,33 +333,33 @@ const App = (props) => {
         setHLat(hLat);
         setHLng(hLng);
 
-        for(let i = 399; i >= 0; i--) {
+        for (let i = 399; i >= 0; i--) {
             let lat = areaArrTmp[0][0] + i * hLat;
             //console.log(lat);
-            for(let j = 0; j < 400; j++) {
+            for (let j = 0; j < 400; j++) {
                 let lng = areaArrTmp[0][1] + j * hLng;
                 //console.log(lng);
-                let eleVal = layer.getValueAtLatLng(lat,lng);
+                let eleVal = layer.getValueAtLatLng(lat, lng);
                 mx[399 - i][j] = eleVal;
 
                 //console.log(layer.getValueAtLatLng(lat,lng));
 
-                let absCoordsDiffHlat = 2*Math.abs(firstCoords[0] - lat);
+                let absCoordsDiffHlat = 2 * Math.abs(firstCoords[0] - lat);
                 let absCoordsDiffHlng = Math.abs(firstCoords[1] - lng);
 
-                let absCoordsDiffTlat = 2*Math.abs(secondCoords[0] - lat);
+                let absCoordsDiffTlat = 2 * Math.abs(secondCoords[0] - lat);
                 let absCoordsDiffTlng = Math.abs(secondCoords[1] - lng);
 
                 let chebMetricH = Math.max(absCoordsDiffHlat, absCoordsDiffHlng);
                 let chebMetricT = Math.max(absCoordsDiffTlat, absCoordsDiffTlng);
 
-                if(chebMetricH < distH) {
+                if (chebMetricH < distH) {
                     distH = chebMetricH;
                     yH = 399 - i;
                     xH = j;
                 }
 
-                if(chebMetricT < distT) {
+                if (chebMetricT < distT) {
                     distT = chebMetricT;
                     yT = 399 - i;
                     xT = j;
@@ -321,7 +376,7 @@ const App = (props) => {
             minTan: minTanSl,
             maxTan: maxTanSl,
             friction: fricSl,
-            wElevation: 20,
+            wElevation: 0,
             xH: xH,
             yH: yH,
             xT: xT,
@@ -329,26 +384,28 @@ const App = (props) => {
             mx: mx
         });
 
+            axios.post("http://localhost:8080/PathFinder/data", postObj)
+                .then(function (response) {
+                    console.log(response);
 
-        axios.post("http://localhost:8080/PathFinder/data", postObj)
-            .then(function (response) {
-                console.log(response);
+                    const respPath = response.data.path.map(str => {
+                        return [parseInt(str[0]), parseInt(str[1])];
+                    });
+                    setPath(respPath);
 
-                const respPath = response.data.path.map(str => {
-                    return [parseInt(str[0]),parseInt(str[1])];
+
+                })
+                .catch(function (error) {
+                    console.log(error);
                 });
-                setPath(respPath);
-
-
-
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
     }
 
     const blackOptions = { color: 'black' }
     const redOptions = { color: 'red' }
+    const greenOptions = { color: 'green'}
+    const purpleOptions = { color: 'purple'}
+    const blueOptions = { color: 'blue'}
+    const orangeOptions = {color: 'orange'}
 
     return(
         <ThemeProvider theme={darkTheme}>
