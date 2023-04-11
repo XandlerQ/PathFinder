@@ -319,7 +319,7 @@ public class GraphBuilder {
         }
 
         if (elevation <= wElevation) {
-            weight *= 5;
+            weight *= 50;
         }
 
         return weight;
