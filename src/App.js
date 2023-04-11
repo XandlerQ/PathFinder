@@ -35,6 +35,7 @@ import 'leaflet/dist/leaflet.css'
 import SRTM from './viz.SRTMGL3_color-relief.tif'
 import USGS from './viz.USGS30m_color-relief.tif'
 import NASA from './viz.NASADEM_color-relief.tif'
+import DEM from './viz.SRTMGL3_hillshade.tif'
 
 
 let center = [55.76, 37.64];
@@ -75,6 +76,8 @@ const options = {
 
 
 const layer = L.leafletGeotiff(SRTM, options);
+
+
 
 
 
@@ -145,7 +148,10 @@ const App = (props) => {
             var baseMaps = {
                 "OpenStreetMap": osm,
             };
-            let layerControl = L.control.layers(baseMaps, overlayMaps).addTo(map);
+
+            L.control.layers(baseMaps, overlayMaps).addTo(map);
+
+
             flag = true;
         }
 
@@ -162,7 +168,7 @@ const App = (props) => {
                     ", " +
                     coords[1].toPrecision(8).toString());
 
-                console.log(layer.getValueAtLatLng(e.latlng.lat, e.latlng.lng));
+                console.log(layer.getValueAtLatLng(e.latlng.lat, e.latlng.lng) * 11.5294);
 
             },
 
@@ -274,7 +280,7 @@ const App = (props) => {
         }
         if (idx >= 5) {
             for(let i in map._layers) {
-                if(map._layers[i]._path != undefined) {
+                if(map._layers[i]._path !== undefined) {
                         try {
                             map.removeLayer(map._layers[i]);
                             break;
@@ -290,7 +296,12 @@ const App = (props) => {
 
 
 
-        let polyline = L.polyline(mxPath, colorOptions).addTo(map);
+        let polyline = L.polyline(mxPath, colorOptions);
+        polyline.addTo(map);
+        var PathLayer = {
+            "Path": polyline
+        };
+        L.control.layers(null, PathLayer).addTo(map);
         setPath(null);
 
 
@@ -301,7 +312,7 @@ const App = (props) => {
         let absCoordsDiffA = 2 * Math.abs(firstCoords[0] - secondCoords[0]);
         let absCoordsDiffB = Math.abs(firstCoords[1] - secondCoords[1]);
 
-        let chebMetricTmp = Math.max(absCoordsDiffA, absCoordsDiffB) * 1.02;
+        let chebMetricTmp = Math.max(absCoordsDiffA, absCoordsDiffB) * 1.1;
 
         let sqCenter = [];
         sqCenter.push((firstCoords[0] + secondCoords[0]) / 2, (firstCoords[1] + secondCoords[1]) / 2);
@@ -339,7 +350,7 @@ const App = (props) => {
             for (let j = 0; j < 400; j++) {
                 let lng = areaArrTmp[0][1] + j * hLng;
                 //console.log(lng);
-                let eleVal = layer.getValueAtLatLng(lat, lng);
+                let eleVal = layer.getValueAtLatLng(lat, lng) * 11.5294;
                 mx[399 - i][j] = eleVal;
 
                 //console.log(layer.getValueAtLatLng(lat,lng));
@@ -376,7 +387,7 @@ const App = (props) => {
             minTan: minTanSl,
             maxTan: maxTanSl,
             friction: fricSl,
-            wElevation: 0,
+            wElevation: 27 * 11.5294,
             xH: xH,
             yH: yH,
             xT: xT,
@@ -515,13 +526,13 @@ const App = (props) => {
                     >
                         <Grid item xs={3}>
                             <Paper elevation={1} >
-                                <Tooltip title="Минимальный тангенс" >
+                                <Tooltip title="Minimal tangent of path slope angle" >
                                     <Typography variant="h6" component="h3">
-                                        minTan
+                                        Minimal path slope
                                     </Typography>
                                 </Tooltip>
                                 <Slider
-                                    aria-label="minTan"
+                                    aria-label="Minimal path slope"
                                     defaultValue={-0.7}
                                     //getAriaValueText={sliderValue}
                                     valueLabelDisplay="auto"
@@ -535,13 +546,13 @@ const App = (props) => {
                         </Grid>
                         <Grid item xs={3}>
                             <Paper elevation={1} >
-                                <Tooltip title="Максимальный тангенс" >
+                                <Tooltip title="Maximal tangent of path slope angle" >
                                     <Typography variant="h6" component="h3">
-                                        maxTan
+                                        Maximal path slope
                                     </Typography>
                                 </Tooltip>
                                 <Slider
-                                    aria-label="maxTan"
+                                    aria-label="Maximal path slope"
                                     defaultValue={0.7}
                                     valueLabelDisplay="auto"
                                     step={0.1}
@@ -554,13 +565,13 @@ const App = (props) => {
                         </Grid>
                         <Grid item xs={3}>
                             <Paper elevation={1} >
-                                <Tooltip title="Коэффициент трения" >
+                                <Tooltip title="Friction coefficient determines an extent of path steepness: the lower the coefficient the gentlier slope will be calculated" >
                                     <Typography variant="h6" component="h3">
-                                        Friction
+                                        Friction coefficient
                                     </Typography>
                                 </Tooltip>
                                 <Slider
-                                    aria-label="Friction"
+                                    aria-label="Friction coefficient"
                                     defaultValue={0.02}
                                     valueLabelDisplay="auto"
                                     step={0.0001}
