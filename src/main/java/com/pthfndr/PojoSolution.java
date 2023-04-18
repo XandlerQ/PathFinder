@@ -22,6 +22,7 @@ public class PojoSolution {
 
     PojoSolution() {
         this.energy = 0;
+        this.length = 0;
         this.size = 0;
         this.path = null;
     }

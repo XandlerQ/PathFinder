@@ -51,10 +51,16 @@ public class API extends HttpServlet {
         System.out.println(requestMatrix.getN() + " " + requestMatrix.getM());
 
         controller.buildGraph(requestMatrix.getxH(), requestMatrix.getyH(), requestMatrix.getxT(), requestMatrix.getyT());
-        controller.initSolve();
-        PojoSolution solution = controller.getSolution();
-
-        String responseJsonString = gson.toJson(solution);
+        boolean result = controller.initSolve();
+        String responseJsonString;
+        if(result) {
+            PojoSolution solution = controller.getSolution();
+            responseJsonString = gson.toJson(solution);
+        }
+        else {
+            PojoSolution solution = new PojoSolution();
+            responseJsonString = gson.toJson(solution);
+        }
         //System.out.println(responseJsonString);
 
 
